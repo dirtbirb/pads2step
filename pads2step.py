@@ -63,8 +63,7 @@ class AttributeLabel(object):
         vals = spliterator(line1)
         for i in range(len(vals)):
             if i < 3 or i == 4 or i == 5: item = float(vals[i])
-            elif i == 3 or i == 6: item = int(vals[i])
-            elif i == 7 or i == 8: item = bin(int(vals[i]))
+            elif i == 3 or (i > 5 and i < 9): item = int(vals[i])
             elif i == 9:
                 item = ''
                 for j in range(i, len(vals)):
@@ -73,7 +72,7 @@ class AttributeLabel(object):
                 break
             setattr(self, items[i], item)
 
-        self.text_string = line2
+        self.name = line2
 
 class Piece(object):
     def __init__(self, line, infile):
@@ -110,10 +109,10 @@ class Terminal(list):
         self.pin = next(items)
 
 class PadStack(object):
-    def __init__(self, infile):
+    def __init__(self, line, infile):
         class Layer(object):
             def __init__(self, line):
-                items = spliterator(line)
+                items = iter(spliterator(line))
                 self.n = int(next(items))
                 self.width = float(next(items))
                 self.shape = next(items)
@@ -137,25 +136,18 @@ class PadStack(object):
                     self.n_spk = int(next(items))
 
         # Read header line
-        header = spliterator(next(infile))
-        self.pin = int(next(header))
-        self.n_layers = int(next(header))
-        self.plated = next(header)
-        self.drill = float(next(header))
-
-        # Check for slotted hole parameters
-        item = next(header)
-        if item:
-            self.slotted = True
-            self.drlori = float(item)
-            self.drllen = float(next(header))
-            self.drloff = float(next(header))
-        else:
-            self.slotted = False
+        items = ('pin', 'n_layers', 'plated', 'drill', 'drlori', 'drllen', 'drloff')
+        header = spliterator(line)[1:]
+        self.slotted = len(header) > 4
+        for i in range(len(header)):
+            if i < 2: attr = int(header[i])
+            elif i == 2: attr = header[i]
+            elif i > 2: attr = float(header[i])
+            setattr(self, items[i], attr)
 
         # Read layers
         self.layers = []
-        for i in range(n_layers):
+        for i in range(self.n_layers):
             self.layers.append( Layer(next(infile)) )
 
 
@@ -207,15 +199,14 @@ class PCBDecals(PadsItem):
             line = next(infile).rstrip()
 
         # Read pad stacks
-        self.pad_stacks = []
-        while line[0:2] == 'PAD':
+        self.pads = []
+        while line[0:3] == 'PAD':
             self.pads.append( PadStack(line, infile) )
             line = next(infile).rstrip()
 
 
 class PartTypes(PadsItem):
     pass
-
 
 
 fn = "examples/MOLEX_1051330011.d"
@@ -236,3 +227,38 @@ with open(fn) as infile:
         thing = PartTypes(infile)
     else: # Invalid data type
         print("Unrecognized data type!")
+
+if __name__ == "__main__":
+    print("TESTS:")
+    tests = [
+        ('name', 'MOLEX_1051330011'),
+        ('units', 'M'),
+        ('x', 0),
+        ('y', 0),
+        ('n_attrs', 2),
+        ('n_labels', 3),
+        ('n_pieces', 7),
+        ('n_text', 0),
+        ('n_terminals', 8),
+        ('n_stacks', 4),
+        ('maxlayers', 0),
+        ('timestamp', datetime(2017, 10, 26, 14, 12, 31))
+    ]
+    for t in tests:
+        print(str(getattr(thing, t[0]) == t[1]) + ' - ' + t[0] + ": " + str(t[1]))
+
+    print(thing.attributes["Geometry.Height"])
+
+    for lbl in thing.attribute_labels:
+        print(lbl.name, lbl.y, int(lbl.flags))
+
+    for pc in thing.pieces:
+        print(pc.type)
+
+    for t in thing.terminals:
+        print(t.pin)
+
+    for p in thing.pads:
+        print(p.plated)
+        for l in p.layers:
+            print(l.shape)
