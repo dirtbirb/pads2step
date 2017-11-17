@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+
+<H2 CLASS="clause"><A NAME="clause-5"></A>5 Formal definitions</H2>
+
+
+<H3><A NAME="clause-5-1"></A>5.1 Formal notation</H3>
+
+<P>Wirth Syntax Notation (WSN) is used in this part of ISO 10303 to
+specify the syntax of the exchange structure in a formal notation. WSN
+is described in <A HREF="annexB.htm">annex B</A>. </P>
+
+<H3><A NAME="clause-5-2"></A>5.2 Basic alphabet definition</H3>
+
+<P>The alphabet of the exchange structure is defined as the code
+points U+0020 to U+007E and U+0080 to U+10FFFF of ISO/IEC 10646.  The
+alphabet shall be represented by octets in the exchange structure
+using the UTF-8 encoding scheme defined by ISO/IEC 10646.
+<A HREF="#table-1">Table 1</A> divides the basic alphabet into
+subsets.</P>
+
+The UTF-8 encoding scheme results in a single octet with a hexadecimal
+value from 20 to 7E for each LATIN_CODEPOINT character, and a sequence
+of octets with hexadecimal values from 80 to F4 for each
+HIGH_CODEPOINT character.  Octets with values outside of these ranges
+shall be ignored when processing the exchange structure.
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The set of LATIN_CODEPOINT character
+is equivalent to the basic alphabet in the first and second editions
+of ISO 10303-21.  The UTF-8 representation of code points U+0020 to
+U+007E is the same as the ISO/IEC 8859-1 characters G(02/00) to
+G(07/14) that defined the basic alphabet in earlier editions.  Use of
+HIGH_CODEPOINT characters within the exchange structure can be avoided
+when compatibility with previous editions of ISO 10303-21 is
+desired.</P>
+
+<TABLE BORDER="1" ALIGN="center">
+<CAPTION>
+<A NAME="table-1"></A>Table 1 &mdash; WSN defining subsets of the basic alphabet
+</CAPTION>
+<TR>
+<TD>
+
+<PRE CLASS="code">
+SPACE    = &quot; &quot; .
+
+DIGIT    = &quot;0&quot; | &quot;1&quot; | &quot;2&quot; | &quot;3&quot; | &quot;4&quot; | &quot;5&quot; | &quot;6&quot; | &quot;7&quot;
+         | &quot;8&quot; | &quot;9&quot; .
+
+LOWER    = &quot;a&quot; | &quot;b&quot; | &quot;c&quot; | &quot;d&quot; | &quot;e&quot; | &quot;f&quot; | &quot;g&quot; | &quot;h&quot;
+         | &quot;i&quot; | &quot;j&quot; | &quot;k&quot; | &quot;l&quot; | &quot;m&quot; | &quot;n&quot; | &quot;o&quot; | &quot;p&quot;
+         | &quot;q&quot; | &quot;r&quot; | &quot;s&quot; | &quot;t&quot; | &quot;u&quot; | &quot;v&quot; | &quot;w&quot; | &quot;x&quot;
+         | &quot;y&quot; | &quot;z&quot; .
+
+UPPER    = &quot;A&quot; | &quot;B&quot; | &quot;C&quot; | &quot;D&quot; | &quot;E&quot; | &quot;F&quot; | &quot;G&quot; | &quot;H&quot;
+         | &quot;I&quot; | &quot;J&quot; | &quot;K&quot; | &quot;L&quot; | &quot;M&quot; | &quot;N&quot; | &quot;O&quot; | &quot;P&quot;
+         | &quot;Q&quot; | &quot;R&quot; | &quot;S&quot; | &quot;T&quot; | &quot;U&quot; | &quot;V&quot; | &quot;W&quot; | &quot;X&quot;
+         | &quot;Y&quot; | &quot;Z&quot; | &quot;_&quot; .
+
+SPECIAL  = &quot;!&quot; | &quot;&quot;&quot;&quot; | &quot;*&quot; | &quot;$&quot; | &quot;%&quot; | &quot;&amp;&quot; | &quot;.&quot; | &quot;#&quot;
+	 | &quot;+&quot; | &quot;,&quot;  | &quot;-&quot; | &quot;(&quot; | &quot;)&quot; | &quot;?&quot; | &quot;/&quot; | &quot;:&quot; 
+	 | &quot;;&quot; | &quot;&lt;&quot;  | &quot;=&quot; | &quot;&gt;&quot; | &quot;@&quot; | &quot;[&quot; | &quot;]&quot; | &quot;{&quot; 
+	 | &quot;|&quot; | &quot;}&quot;  | &quot;^&quot; | &quot;`&quot; | &quot;&#126;&quot; .
+
+REVERSE_SOLIDUS  = &quot;&#92;&quot; .
+
+APOSTROPHE = &quot;'&quot; .
+
+LATIN_CODEPOINT = SPACE | DIGIT | LOWER | UPPER | SPECIAL 
+          | REVERSE_SOLIDUS | APOSTROPHE
+
+HIGH_CODEPOINT	= <em>(U+0080 to U+10FFFF, see <A href="#clause-5-2">5.2</A>)</em>
+</PRE>
+
+
+</TD>
+</TR>
+</TABLE>
+
+<H3><A NAME="clause-5-3"></A>5.3 Exchange structure</H3>
+
+<P>The exchange structure shall be a sequential file using a clear
+text encoding. The exchange structure shall contain a header section
+and four optional sections: the anchor section, the reference section,
+one or more data sections and one or more signature sections.  The
+role of each section is described below in the same order as which
+they appear in the exchange structure.
+
+<ul>
+<li>The header section provides data relating to the exchange
+structure itself.  The structure of the header section is specified in
+<A href="clause8.htm">clause 8</A>.
+
+
+<li>The anchor section provides external names for entities and values
+that can be referenced from other exchange structures. The structure
+of the anchor section is defined in <A href="clause9.htm">clause
+9</A>.
+
+<li>The reference section provides for entities and values that are
+defined in external exchange structures. The structure of the
+reference section is defined in <A href="clause10.htm">clause 10</A>.
+
+<li>The data section provides the data to be transferred. The
+structure of the data section is specified
+in <A href="clause11.htm">clause 11</A>.
+
+<li>The signature section validates the data to be transferred and
+authenticates the origin of that data. The structure of the signature
+section is specified in <A href="clause14.htm">clause 14</A>.
+</ul> 
+
+<p>The exchange structure is defined by the WSN
+in <A HREF="#table-3">Table 3</A>.</P>
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The header section is at the start
+because it defines context information for the rest of the exchange
+structure.  The anchor and reference sections appear next because they
+define how the structure is linked to other files. Putting them near
+the beginning allows search systems to find these dependencies without
+reading the entire structure. The signature sections is at the end so that
+new signatures can be added without disturbing the text validated
+by earlier signatures.</P>
+
+<P>The exchange structure is a stream of octets that are encodings of
+the graphic characters of the basic alphabet.  The graphic characters
+are collected into recognizable sequences called tokens. Tokens may be
+separated by token separators.  The exchange structure can be
+considered as a sequence of tokens and token separators.</P>
+
+<P>The exchange structure may be compressed and stored in an archive
+using the organization described
+in <A HREF="annexA.htm#clause-A-4">annex A.4</A>.
+
+
+<H3><A NAME="clause-5-4"></A>5.4 Definition of tokens</H3>
+
+<P>The tokens used in the exchange structure are defined by the WSN in
+Table 2.  The tokens UNIVERSAL_RESOURCE_IDENTIFIER,
+URI_FRAGMENT_IDENTIFIER and BASE64 are defined in
+<A href="clause6.htm#clause-6-5">6.5</A>.
+
+<TABLE ALIGN="center" BORDER="1">
+<CAPTION>
+<A NAME="table-2"></A>Table 2 &mdash; WSN of token definitions
+</CAPTION>
+<TR>
+<TD>
+<PRE CLASS="code">
+KEYWORD           = USER_DEFINED_KEYWORD | STANDARD_KEYWORD .
+
+USER_DEFINED_KEYWORD = &quot;!&quot; UPPER { UPPER | DIGIT } .
+
+STANDARD_KEYWORD  = UPPER { UPPER | DIGIT } .
+
+SIGN              = &quot;+&quot; | &quot;-&quot; .
+
+INTEGER           = [ SIGN ] DIGIT { DIGIT } .
+
+REAL              = [ SIGN ] DIGIT { DIGIT } &quot;.&quot; { DIGIT }
+                    [ &quot;E&quot; [ SIGN ] DIGIT { DIGIT } ] .
+
+STRING            = &quot;'&quot; { SPECIAL | DIGIT | SPACE | LOWER | UPPER | 
+                    HIGH_CODEPOINT |
+                    APOSTROPHE APOSTROPHE | 
+                    REVERSE_SOLIDUS REVERSE_SOLIDUS | 
+                    CONTROL_DIRECTIVE } &quot;'&quot; .
+
+ENTITY_INSTANCE_NAME      = &quot;#&quot; ( DIGIT ) { DIGIT } .
+
+VALUE_INSTANCE_NAME       = &quot;@&quot; ( DIGIT ) { DIGIT } .
+
+CONSTANT_ENTITY_NAME      = &quot;#&quot; ( UPPER ) { UPPER | DIGIT } .
+
+CONSTANT_VALUE_NAME       = &quot;@&quot; ( UPPER ) { UPPER | DIGIT } .
+
+LHS_OCCURRENCE_NAME       = ( ENTITY_INSTANCE_NAME | VALUE_INSTANCE_NAME ) . 
+
+RHS_OCCURRENCE_NAME       = ( ENTITY_INSTANCE_NAME | VALUE_INSTANCE_NAME |
+                              CONSTANT_ENTITY_NAME | CONSTANT_VALUE_NAME) . 
+
+ANCHOR_NAME       = &quot;&lt;&quot; URI_FRAGMENT_IDENTIFIER &quot;>&quot; .
+
+TAG_NAME          = ( UPPER | LOWER) { UPPER | LOWER | DIGIT } .
+
+RESOURCE          = &quot;&lt;&quot; UNIVERSAL_RESOURCE_IDENTIFIER &quot;>&quot; .
+
+ENUMERATION       = &quot;.&quot; UPPER { UPPER | DIGIT } &quot;.&quot; .
+
+HEX               = &quot;0&quot; | &quot;1&quot; | &quot;2&quot; | &quot;3&quot; | &quot;4&quot; | &quot;5&quot; | &quot;6&quot; | &quot;7&quot; |
+                    &quot;8&quot; | &quot;9&quot; | &quot;A&quot; | &quot;B&quot; | &quot;C&quot; | &quot;D&quot; | &quot;E&quot; | &quot;F&quot; .
+
+BINARY            = &quot;&quot;&quot;&quot; ( &quot;0&quot; | &quot;1&quot; | &quot;2&quot; | &quot;3&quot; ) { HEX } &quot;&quot;&quot;&quot; .
+
+SIGNATURE_CONTENT = BASE64 .
+</PRE>
+</TD>
+</TR>
+</TABLE>
+
+
+<H3><A NAME="clause-5-5"></A>5.5 WSN of the exchange structure</H3>
+
+<P>The syntax of the exchange structure is specified
+in <A HREF="#table-3">Table 3</A>.  Table 3 references the tokens
+defined in <A HREF="#table-2">Table 2</A>.  The relationship between
+the syntax and the EXPRESS schema is specified in
+<A href="clause12.htm">clause 12</A>.</P>
+
+<TABLE ALIGN="center" BORDER="1">
+<CAPTION>
+<A NAME="table-3"></A>Table 3 &mdash; WSN of the exchange structure
+</CAPTION>
+<TR>
+<TD>
+<PRE CLASS="code">
+EXCHANGE_FILE      = &quot;ISO-10303-21;&quot;
+                     HEADER_SECTION [ ANCHOR_SECTION ] 
+                     [ REFERENCE_SECTION ] { DATA_SECTION } 
+                     &quot;END-ISO-10303-21;&quot; { SIGNATURE_SECTION }.
+
+HEADER_SECTION     = &quot;HEADER;&quot; 
+                     HEADER_ENTITY HEADER_ENTITY HEADER_ENTITY
+                     [HEADER_ENTITY_LIST]
+                     &quot;ENDSEC;&quot; .
+HEADER_ENTITY_LIST = HEADER_ENTITY { HEADER_ENTITY } .
+HEADER_ENTITY      = KEYWORD  &quot;(&quot; [ PARAMETER_LIST ] &quot;)&quot; &quot;;&quot; .
+
+PARAMETER_LIST     = PARAMETER { &quot;,&quot; PARAMETER } .
+PARAMETER          = TYPED_PARAMETER  |
+                     UNTYPED_PARAMETER | OMITTED_PARAMETER  .
+TYPED_PARAMETER    = KEYWORD &quot;(&quot; PARAMETER &quot;)&quot; .
+UNTYPED_PARAMETER  = &quot;$&quot; | INTEGER | REAL | STRING | RHS_OCCURENCE_NAME
+                     | ENUMERATION | BINARY | LIST .
+OMITTED_PARAMETER  = &quot;*&quot; .
+LIST               = &quot;(&quot; [ PARAMETER { &quot;,&quot; PARAMETER } ] &quot;)&quot; .
+
+ANCHOR_SECTION     = &quot;ANCHOR;&quot; ANCHOR_LIST &quot;ENDSEC;&quot; .
+ANCHOR_LIST        = { ANCHOR } .
+ANCHOR             = ANCHOR_NAME &quot;=&quot; ANCHOR_ITEM { ANCHOR_TAG } &quot;;&quot; .
+ANCHOR_ITEM        = &quot;$&quot; | INTEGER | REAL | STRING | ENUMERATION | BINARY
+                     | RHS_OCCURRENCE_NAME | RESOURCE | ANCHOR_ITEM_LIST .
+ANCHOR_ITEM_LIST   = &quot;(&quot; [ ANCHOR_ITEM { &quot,&quot; ANCHOR_ITEM } ] &quot;)&quot; .
+ANCHOR_TAG         = &quot;{&quot; TAG_NAME &quot;:&quot; ANCHOR_ITEM &quot;}&quot; .
+
+REFERENCE_SECTION  = &quot;REFERENCE;&quot; REFERENCE_LIST &quot;ENDSEC;&quot; .
+REFERENCE_LIST     = { REFERENCE } .
+REFERENCE          = LHS_OCCURRENCE_NAME &quot;=&quot; RESOURCE &quot;;&quot; .
+
+DATA_SECTION       = &quot;DATA&quot; [ &quot;(&quot; PARAMETER_LIST &quot;)&quot; ] &quot;;&quot; 
+                     ENTITY_INSTANCE_LIST &quot;ENDSEC;&quot; .
+ENTITY_INSTANCE_LIST = { ENTITY_INSTANCE } .
+ENTITY_INSTANCE    = SIMPLE_ENTITY_INSTANCE | COMPLEX_ENTITY_INSTANCE .
+SIMPLE_ENTITY_INSTANCE  = ENTITY_INSTANCE_NAME &quot;=&quot; SIMPLE_RECORD &quot;;&quot; .
+COMPLEX_ENTITY_INSTANCE = ENTITY_INSTANCE_NAME &quot;=&quot; SUBSUPER_RECORD &quot;;&quot; .
+SIMPLE_RECORD      = KEYWORD &quot;(&quot; [ PARAMETER_LIST ] &quot;)&quot; .
+SUBSUPER_RECORD    = &quot;(&quot; SIMPLE_RECORD_LIST &quot;)&quot; .
+SIMPLE_RECORD_LIST = SIMPLE_RECORD { SIMPLE_RECORD } .
+
+SIGNATURE_SECTION  = &quot;SIGNATURE&quot; SIGNATURE_CONTENT &quot;ENDSEC;&quot.
+</PRE>
+</TD>
+</TR>
+</TABLE>
+
+
+<H3><A NAME="clause-5-6"></A>5.6 Token separators</H3>
+
+<P>A token separator is an element that separates two tokens. Token
+separators are <EM>space</EM>, the explicit print control directives,
+and comments.  A token separator may appear between the terminals or
+non-terminals of the productions of Table 3. Any number of token
+separators may appear wherever one token separator may appear. A token
+separator shall not appear within tokens except that explicit print
+control directives may also appear within binaries and within
+strings. Print control directives are defined in
+<A href="clause13.htm">clause 13</A>.</P>
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <EM>Space</EM> is the only
+whitespace character that separates tokens.  Line-delimiters such
+as <EM>line feed</EM> or <EM>carriage return</EM> and other control
+characters such as <em>form feed</em> or <em>character tabulation</em>
+(tab) may appear in the exchange structure but are required
+by <A href="#clause-5-2">5.2</A> to be ignored when processing the
+exchange structure.  Consequently, line breaks may appear anywhere
+within the structure, including within tokens.</P>
+
+<P>A comment shall be encoded as a <EM>solidus asterisk</EM>
+&quot;/*&quot; followed by any number of characters from the basic
+alphabet, and terminated by an <EM>asterisk solidus</EM>
+&quot;*/&quot;. Any occurrence of <EM>solidus asterisk</EM> following
+the first occurrence shall not be significant, i.e. comments cannot be
+nested. All graphic characters appearing inside a comment shall not be
+significant to the exchange structure and are only intended to be read
+by humans.</P>
+
+
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>

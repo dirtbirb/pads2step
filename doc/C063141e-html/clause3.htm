@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+
+<H2 CLASS="clause"><A NAME="clause-3"></A>3 Terms, definitions, and abbreviated terms</H2>
+
+
+<H3><A NAME="clause-3-1"></A>3.1 Term and definitions</H3>
+
+<P>For the purposes of this document, the following terms and
+definitions apply.</P>
+
+<H4><A NAME="clause-3-1-1"></A>3.1.1 Term defined in ISO/IEC 8859-1</H4>
+
+<UL>
+<LI>byte.</LI>
+</UL>
+
+
+<H4><A NAME="clause-3-1-2"></A>3.1.2 Terms defined in ISO/IEC 10646</H4>
+
+<UL>
+<LI>basic multilingual plane;</LI>
+<LI>character;</LI>
+<LI>code point;</LI>
+<LI>encoding scheme;</LI>
+<LI>graphic character;</LI>
+<LI>octet.</LI>
+</UL>
+
+
+<H3><A NAME="clause-3-1-3"></A>3.1.3 Terms defined in ISO 10303-1</H3>
+
+<UL>
+<LI>application protocol;</LI>
+<LI>exchange structure.</LI>
+</UL>
+
+
+<H4><A NAME="clause-3-1-4"></A>3.1.4 Terms defined in ISO 10303-11</H4>
+
+<UL>
+<LI>complex entity instance;</LI>
+<LI>data type;</LI>
+<LI>EXPRESS constant;</LI>
+<LI>entity;</LI>
+<LI>partial complex entity instance;</LI>
+<LI>simple entity instance;</LI>
+<LI>token.</LI>
+</UL>
+
+<H4><A NAME="clause-3-1-5"></A>3.1.5 Terms defined in ISO/IEC 16262</H4>
+
+<UL>
+<LI>ECMAScript.</LI>
+</UL>
+
+<H4><A NAME="clause-3-1-6"></A>3.1.6 Terms defined in ISO/IEC 21320-1</H4>
+
+<UL>
+<LI>ZIP Archive.</LI>
+</UL>
+
+<H4><A NAME="clause-3-1-7"></A>3.1.7 Other terms and definitions</H4>
+<div class=termdef>
+
+<H5><A NAME="clause-3-1-7-1"></A>3.1.7.1<BR>
+Uniform Resource Identifier<BR>
+URI</H5>
+ 
+<P>compact string of characters for identifying an abstract or
+physical resource
+<P>[Source: IETF RFC 2396: <EM>Uniform Resource Identifiers (URI):
+Generic Syntax</EM>]</P>
+
+<H5><A NAME="clause-3-1-7-2"></A>3.1.7.2<BR>
+URI Fragment Identifier</H5>
+ 
+<P>additional reference information to be interpreted after a URI
+retrieval action has been successfully completed
+<P>[Source: Fragment identifier in IETF RFC 2396]</P>
+
+
+
+<H5><A NAME="clause-3-1-7-3"></A>3.1.7.3<BR>
+URI Query component</H5>
+ 
+<P>string of information to be interpreted by a resource
+<P>[Source: Query component in IETF RFC 2396]</P>
+
+
+
+<H5><A NAME="clause-3-1-7-4"></A>3.1.7.4<BR>
+Universally Unique Identifier<BR>
+UUID</H5>
+
+<P>identifier that is unique across both space and time
+
+<P>[Source: IETF RFC 4122: <EM>A Universally Unique IDentifier (UUID)
+URN Namespace</EM>]</P>
+
+
+
+<H5><A NAME="clause-3-1-7-5"></A>3.1.7.5<BR>
+Base64 encoding</H5>
+
+<P>character encoding of the CMS
+
+<P>[Source: IETF RFC 4648: <EM>The Base16, Base32 and Base64 Data
+Encodings</EM>]</P>
+
+
+
+<H5><A NAME="clause-3-1-7-6"></A>3.1.7.6<BR>
+Cryptographic Message Syntax
+<BR>CMS</H5>
+
+<P> specification for the form and content of a digital signature
+
+<P>[Source: IETF RFC 5652: <EM>Cryptographic Message Syntax
+(CMS)</EM>]</P>
+
+
+<H5><A NAME="clause-3-1-7-7"></A>3.1.7.7<BR>
+Message digest</H5>
+
+<P>hash value computed on the content and included in the signature
+data 
+<P>[Source: IETF RFC 5652 Section 5]</P>
+
+
+
+<H5><A NAME="clause-3-1-7-8"></A>3.1.7.8<BR>anchor</H5>
+
+<P>identifier that can be addressed in a reference</P>
+
+
+
+<H5><A NAME="clause-3-1-7-9"></A>3.1.7.9<BR>basic alphabet</H5>
+
+<P>set of UCS characters corresponding to code points U+0020 to
+U+007E and U+0080 to U+10FFFF</P>
+
+
+<H5><A NAME="clause-3-1-7-10"></A>3.1.7.10<BR>clear text encoding</H5>
+
+<P>encoding of information, using a sequence of codes for
+characters in the basic alphabet</P>
+
+
+<H5><A NAME="clause-3-1-7-11"></A>3.1.7.11<BR>control directive</H5>
+
+<P>sequence of characters in the basic alphabet</P>
+
+
+
+<H5><A NAME="clause-3-1-7-12"></A>3.1.7.12<BR>keyword</H5>
+
+<P>special sequence of characters identifying an entity or a defined
+type in the exchange structure</P>
+
+
+
+<H5><A NAME="clause-3-1-7-13"></A>3.1.7.13<BR>reference</H5>
+
+<P>address of an anchor in an exchange structure, or in another type of
+resource that can be converted to an exchange structure</P>
+
+
+
+<H5><A NAME="clause-3-1-7-14"></A>3.1.7.14<BR>resource</H5>
+
+<P>physical or abstract exchange structure addressed by a URI</P>
+
+
+
+<H5><A NAME="clause-3-1-7-15"></A>3.1.7.15<BR>section</H5>
+
+<P>collection of data of the same functional category of
+information</P>
+
+
+<H5><A NAME="clause-3-1-7-16"></A>3.1.7.16<BR>sequential file</H5>
+
+<P>file that can only be accessed in a sequential manner</P>
+
+
+<H5><A NAME="clause-3-1-7-17"></A>3.1.7.17<BR>signature</H5>
+
+<P>cryptographically encoded authentication of content</P>
+
+
+
+<H5><A NAME="clause-3-1-7-18"></A>3.1.7.18<BR>tag</H5>
+
+<P>additional information about an anchor that is outside the scope of
+the schema</P>
+
+
+<H5><A NAME="clause-3-1-7-19"></A>3.1.7.19<BR>token separator</H5>
+
+<P>sequence of one or more characters in the basic alphabet that
+separate any two tokens</P>
+
+</div>
+
+<H3><A NAME="clause-3-2"></A>3.2 Abbreviated terms</H3>
+
+
+<table border="0" cellpadding="2">
+<tbody>
+<TR><TD>BMP</TD>	<TD>Basic Multilingual Plane</TD></TR>
+<TR><TD>CMS</TD>	<TD>Cryptographic Message Syntax</TD></TR>
+<TR><TD>IETF</TD>	<TD>Internet Engineering Task Force</TD></TR>
+<TR><TD>GUID</TD>	<TD>Globally Unique Identifier</TD></TR>
+<TR><TD>OID</TD>	<TD>Object Identifier</TD></TR>
+<TR><TD>UCS</TD>	<TD>Universal Character Set</TD></TR>
+<TR><TD>UTF</TD>	<TD>Universal Character Set + Transformation Format</TD></TR>
+<TR><TD>URI</TD>	<TD>Uniform Resource Identifier</TD></TR>
+<TR><TD>UUID</TD>	<TD>Universally Unique Identifier</TD></TR>
+<TR><TD>WSN</TD>	<TD>Wirth Syntax Notation</TD></TR>
+</tbody>
+</TABLE>
+
+
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>

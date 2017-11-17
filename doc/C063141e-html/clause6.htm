@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+
+<H2 CLASS="clause"><A NAME="clause-6"></A>6 Tokens</H2>
+
+<H3><A NAME="clause-6-1"></A>6.1 Token types</H3>
+
+<P>In the exchange structure, a token is a special token, a keyword, a
+simple data type encoding, or an IETF encoding.</P>
+
+
+<H3><A NAME="clause-6-2"></A>6.2 Special tokens</H3>
+
+<P>The special token &quot;ISO-10303-21;&quot; shall be used to open
+an exchange structure, and the special token
+&quot;END-ISO-10303-21;&quot; shall be used to close an exchange
+structure.</P>
+
+<P>The special token &quot;HEADER;&quot; shall be used to open the
+optional header section of an exchange structure, and the special token
+&quot;ENDSEC;&quot; shall be used to close the header section of an
+exchange structure.</P>
+
+<P>The special token &quot;ANCHOR;&quot; shall be used to open the
+optional anchor section of an exchange structure, and the special
+token &quot;ENDSEC;&quot; shall be used to close the anchor section of
+an exchange structure.</P>
+
+<P>The special token &quot;REFERENCE;&quot; shall be used to open the
+optional reference section of an exchange structure, and the special
+token &quot;ENDSEC;&quot; shall be used to close the reference section
+of an exchange structure.</P>
+
+<P>The special token &quot;DATA&quot; shall be used to open the
+optional data sections of an exchange structure, and the special token
+&quot;ENDSEC;&quot; shall be used to close the data sections of an
+exchange structure.</P>
+
+<P>The special token &quot;SIGNATURE&quot; shall be used to open the
+optional signature sections of an exchange structure, and the special token
+&quot;ENDSEC;&quot; shall be used to close the signature sections of an 
+exchange structure.</P>
+
+<P>The special token <EM>dollar sign</EM> (&quot;$&quot;) is used to
+represent an object whose value is not provided in the exchange
+structure.</P>
+
+<P>The special token <EM>asterisk</EM> (&quot;*&quot;) is used to
+represent an object whose value is not provided in the exchange
+structure but can be derived from other values according to rules
+given in the EXPRESS schema
+(see <A href="clause12.htm#clause-12-2-6">12.2.6</A>).</P>
+
+<P>The special tokens <EM>semicolon</EM> (&quot;;&quot;), 
+<EM>parentheses</EM> (&quot;(&quot;, &quot;)&quot;), 
+<EM>comma</EM> (&quot;,&quot;) and <EM>solidus</EM> (&quot;/&quot;)
+are used to punctuate the exchange structure.</P>
+
+
+<H3><A NAME="clause-6-3"></A>6.3 Keywords</H3>
+
+<P>Keywords are sequences of graphic characters indicating an entity
+or a defined type in the exchange structure. Keywords shall consist
+of <EM>capital letters</EM>, <EM>digits</EM>, <EM>low lines</EM>, and
+possibly an <EM>exclamation mark</EM> &quot;!&quot;.
+The <EM>exclamation mark</EM> shall occur at most once, and only as
+the first character in a keyword. </P>
+
+<P>Keywords may be schema-defined keywords or user-defined
+keywords. Keywords that do not begin with the <EM>exclamation
+mark</EM> are schema-defined keywords. Keywords that begin with
+the <EM>exclamation mark</EM> are user-defined keywords. A
+user-defined keyword is the identifier for a named type (an entity
+data type or a defined type) in the EXPRESS schema governing the
+exchange structure. The meaning of a user-defined keyword is a matter
+of agreement between the partners using the exchange structure.</P>
+
+
+<H3><A NAME="clause-6-4"></A>6.4 Simple data type encodings</H3>
+
+<P>Six simple data type encodings are used in exchange structures:
+integer, real, string, instance name, enumeration and binary.</P>
+
+
+<H4><A NAME="clause-6-4-1"></A>6.4.1 Integer</H4>
+
+<P>An integer shall be encoded as a sequence of one or more digits, as
+prescribed in <A HREF="clause5.htm#table-2">Table 2</A>, optionally
+preceded by a <EM>plus sign</EM> &quot;+&quot; or a <EM>minus
+sign</EM> &quot;-&quot;.  Integers shall be expressed in base 10. If
+no sign is associated with the integer, the integer shall be assumed
+to be positive.</P>
+
+<P CLASS="example">EXAMPLE</P>
+
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Valid integer expressions</TH>	<TH>Meaning</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>16</TD>	<TD>Positive 16</TD></TR>
+<TR><TD CLASS=mono>+12</TD>	<TD>Positive 12</TD></TR>
+<TR><TD CLASS=mono>-349</TD>	<TD>Negative 349</TD></TR>
+<TR><TD CLASS=mono>012</TD>	<TD>Positive 12</TD></TR>
+<TR><TD CLASS=mono>00</TD>	<TD>Zero</TD></TR>
+</tbody>
+</TABLE>
+<p>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Invalid integer expressions</TH>	<TH>Problem</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>26 54</TD>	<TD>Contains <EM>spaces</EM></TD></TR>
+<TR><TD CLASS=mono>32.0</TD>	<TD>Contains <EM>full stop</EM></TD></TR>
+<TR><TD CLASS=mono>+ 12</TD>	<TD>Contains <EM>space</EM> between <EM>plus sign</EM> and digits</TD></TR>
+</tbody>
+</TABLE>
+
+<H4><A NAME="clause-6-4-2"></A>6.4.2 Real</H4>
+
+<P>A real shall be encoded as prescribed
+in <A HREF="clause5.htm#table-2">Table 2</A>. The encoding shall
+consist of a decimal mantissa optionally followed by a decimal
+exponent. The decimal mantissa consists of an optional <EM>plus
+sign</EM> &quot;+&quot; or <EM>minus sign</EM> &quot;-&quot;, followed
+by a sequence of one or more digits, followed by a <EM>full stop</EM>
+&quot;.&quot;, followed by a sequence of zero or more digits. A
+decimal exponent consists of the <EM>latin capital letter E</EM>
+optionally followed by a <EM>plus sign</EM> &quot;+&quot; or <EM>minus
+sign</EM> &quot;-&quot;, followed by one or more digits.</P>
+
+<P CLASS="example">
+NOTE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No attempt is made to convey the
+concept of precision in this part of ISO 10303. Where a precise
+meaning is necessary, the sender and receiver of the exchange
+structure should agree on one. Where a precise meaning is required as
+part of the description of an entity data type, this meaning should be
+included in the entity data type definition in the EXPRESS schema.</P>
+
+<P CLASS="example">
+NOTE 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Under certain conditions,
+transfer of clear text files via electronic mail attachment has been
+observed to corrupt the <em>full stop</em> in a real value.
+See <A HREF="annexA.htm#clause-A-2-2">A.2.2</A> for recommendations.</P>
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Valid real expressions</TH>	<TH>Meaning</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>+0.0E0</TD>	<TD>0.0</TD></TR>
+<TR><TD CLASS=mono>-0.0E-0</TD>	<TD>0.0, as above example</TD></TR>
+<TR><TD CLASS=mono>1.5</TD>	<TD>1.5</TD></TR>
+<TR><TD CLASS=mono>-32.178E+02</TD>	<TD>-3217.8</TD></TR>
+<TR><TD CLASS=mono>0.25E8</TD>	<TD>25 million </TD></TR>
+<TR><TD CLASS=mono>0.E25</TD>	<TD>0.</TD></TR>
+<TR><TD CLASS=mono>2.</TD>	<TD>2.</TD></TR>
+<TR><TD CLASS=mono>5.0</TD>	<TD>5.0 </TD></TR>
+</tbody>
+</TABLE>
+<p>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Invalid real expressions</TH>	<TH>Problem</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>1.2E3.</TD>	<TD>Decimal point not allowed in exponent</TD></TR>
+<TR><TD CLASS=mono>1E05</TD>	<TD>Decimal point required in mantissa</TD></TR>
+<TR><TD CLASS=mono>1,000.00</TD>	<TD><EM>Comma</EM> not allowed</TD></TR>
+<TR><TD CLASS=mono>3.E</TD>	<TD>Digit(s) required in exponent</TD></TR>
+<TR><TD CLASS=mono>.5</TD>	<TD>At least one digit must precede the decimal point</TD></TR>
+<TR><TD CLASS=mono>1</TD>	<TD>Decimal point required in mantissa  </TD></TR>
+</tbody>
+</TABLE>
+
+
+
+<H4><A NAME="clause-6-4-3"></A>6.4.3 String</H4>
+
+<H5><A NAME="clause-6-4-3-1"></A>6.4.3.1 String structure</H5>
+
+<P>A string shall be encoded as an <EM>apostrophe</EM> &quot;'&quot;,
+followed by zero or more characters from the basic alphabet, and ended
+by an <EM>apostrophe</EM> &quot;'&quot;.  The null string (string of
+length zero) shall be encoded by two consecutive <EM>apostrophes</EM>
+&quot;''&quot;.  Within a string, a single <EM>apostrophe</EM> shall
+be encoded as two consecutive <EM>apostrophes</EM>.  Within a string,
+a single <EM>reverse solidus</EM> &quot;&#92;&quot; shall be encoded
+as two <EM>reverse solidi</EM> &quot;&#92;&#92;&quot;.</P>
+
+
+
+As specified in <A href="clause5.htm#clause-5-2">5.2</A>, the octet
+representation of the characters at code points U+0080 to U+10FFFF is
+given by UTF-8.  These characters may be encoded as hexadecimal digits
+(see HEX in <A HREF="clause5.htm#table-2">Table 2</A>) using control
+directives defined in <A href="#clause-6-4-3-3">6.4.3.3</A> when
+compatibility with previous editions of ISO 10303-21 is desired.</P>
+
+<P>Characters not in the basic alphabet shall be encoded using the
+control directives defined in 
+<A href="#clause-6-4-3-2">6.4.3.2</A>, 
+<A href="#clause-6-4-3-3">6.4.3.3</A> and 
+<A href="#clause-6-4-3-4">6.4.3.4</A>.  The WSN of control directives
+for encoding strings is given in <A HREF="#table-4">Table 4</A>. </P>
+
+
+<P CLASS="example">
+NOTE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Under certain conditions, transfer
+of clear text files via electronic mail attachment has been observed
+to corrupt a <em>full stop</em> in a string value.
+See <A HREF="annexA.htm#clause-A-2-2">A.2.2</A> for
+recommendations.</P>
+
+<TABLE ALIGN="center" BORDER="1">
+<CAPTION>
+<A NAME="table-4"></A>Table 4 &mdash; String control directives
+</CAPTION>
+<TR>
+<TD>
+<PRE CLASS="code">
+CONTROL_DIRECTIVE = PAGE | ALPHABET | EXTENDED2 
+                  | EXTENDED4 | ARBITRARY .
+
+PAGE = REVERSE_SOLIDUS &quot;S&quot; REVERSE_SOLIDUS LATIN_CODEPOINT .
+
+ALPHABET = REVERSE_SOLIDUS &quot;P&quot; UPPER REVERSE_SOLIDUS .
+
+EXTENDED2 = REVERSE_SOLIDUS &quot;X2&quot; REVERSE_SOLIDUS 
+            HEX_TWO { HEX_TWO } END_EXTENDED .
+
+EXTENDED4 = REVERSE_SOLIDUS &quot;X4&quot; REVERSE_SOLIDUS
+            HEX_FOUR { HEX_FOUR } END_EXTENDED .
+
+END_EXTENDED = REVERSE_SOLIDUS &quot;X0&quot; REVERSE_SOLIDUS .
+
+ARBITRARY = REVERSE_SOLIDUS &quot;X&quot; REVERSE_SOLIDUS HEX_ONE .
+
+HEX_ONE = HEX HEX .
+
+HEX_TWO = HEX_ONE HEX_ONE .
+
+HEX_FOUR = HEX_TWO HEX_TWO .
+</PRE>
+</TD>
+</TR>
+</TABLE>
+
+
+<H5><A NAME="clause-6-4-3-2"></A>6.4.3.2 Encoding ISO/IEC 8859 characters within a string</H5>
+
+<P>In ISO/IEC 8859, G(x/y) is the notation for the character in
+&quot;column&quot; x &quot;row&quot; y, i.e., code value (16 &#183; x)
++ y, in the code table.  Each part of ISO/IEC 8859 is identical to the
+ISO/IEC 10646 code points U+0000 to U+007F in positions G(00/00)
+through G(07/15).  The various parts of ISO/IEC 8859 differ in the
+symbols of the extended character set &mdash; positions G(10/00)
+through G(15/14).  To include characters from the extended character
+set in a string requires the use of control directives.</P>
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The control directives described in
+this section are retained for compatibility with previous editions of
+ISO 10303-21.  It is recommended that all ISO/IEC 8859 characters be
+converted to corresponding ISO/IEC 10646 values.</P>
+
+
+<P>The PAGE control directive &mdash; <EM>reverse solidus latin
+capital letter S reverse solidus</EM> (&quot;&#92;S&#92;&quot;)
+followed by a LATIN_CODEPOINT character
+(see <A HREF="clause5.htm#table-1">Table 1</A>) &mdash; is used within
+a string to allow a character in the basic alphabet to represent the
+character in the corresponding position in the ISO/IEC 8859 extended
+alphabet.
+
+The PAGE control directive shall be interpreted in the string as the
+single character G((x+8)/y), where G(x/y) is the basic alphabet
+character following the &quot;&#92;S&#92;&quot;.  That is, if the
+basic alphabet character has code value v, it shall be interpreted as
+the character with code value v + 128. </P>
+
+<P>The control directive <EM>reverse solidus latin capital letter
+P</EM> UPPER <EM>reverse solidus</EM> shall indicate that, for this
+string only, the subsequent <EM>reverse solidus latin capital letter S
+reverse solidus</EM> control directives shall be interpreted as
+referring to the extended alphabet defined in that part of ISO/IEC
+8859 indicated by the value of UPPER. The <EM>capital letter</EM>
+referred to shall be one of the following letters : &quot;A&quot;,
+&quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;,
+&quot;F&quot;, &quot;G&quot;, &quot;H&quot;, &quot;I&quot;. In this
+context, the <EM>latin capital letter A</EM> identifies ISO/IEC
+8859-1; <EM>latin capital letter B</EM> identifies ISO/IEC 8859-2,
+etc. If this control directive does not appear within a string, the
+value &quot;A&quot; shall be assumed for all PAGE control directives;
+i.e., the extended alphabet shall be that specified in ISO/IEC
+8859-1. </P>
+
+<P CLASS="example">EXAMPLE</P>
+
+<TABLE CLASS="example">
+<thead>
+<TR><TH>String as stored</TH>	<TH>Effective contents </TH>	<TH>Comments</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>'CAT'</TD>	<TD>CAT</TD></TR>
+<TR><TD CLASS=mono>'Don''t'</TD>	<TD>Don't</TD></TR>
+<TR><TD CLASS=mono>''''</TD>	<TD>'   </TD></TR>
+<TR><TD CLASS=mono>''</TD>	<TD>string of length zero</TD></TR>
+<TR><TD CLASS=mono>'&#92;S&#92;Drger'</TD>	<TD>&Auml;rger</TD></TR>
+<TR><TD CLASS=mono>'h&#92;S&#92;ttel'</TD>	<TD>h&ocirc;tel</TD></TR>
+<TR><TD CLASS=mono>'&#92;PE&#92;&#92;S&#92;*&#92;S&#92;U&#92;S&#92;b'</TD>	<TD>&#x040A;&#x0435;&#x0442;</TD>	<TD>Cyrillic, 'Nyet'</TD></TR> 
+</tbody>
+</TABLE> 
+
+<H5><A NAME="clause-6-4-3-3"></A>6.4.3.3 Encoding ISO/IEC 10646 characters within a string</H5>
+
+<P>This part of ISO 10303 specifies control directives that allow
+encoding of ISO/IEC 10646 characters as a sequence of hexadecimal
+characters.  These control directives may be used in place of UTF-8
+encoded characters when compatibility with previous editions of the
+exchange structure encoding is desired.</P>
+
+<P>The control directive <EM>reverse solidus latin capital letter X
+digit two reverse solidus</EM> &quot;&#92;X2&#92;&quot; shall be
+followed by multiples of four hexadecimal characters.  Each multiple
+of four hexadecimal characters shall be the interpreted as a 16-bit
+number giving an integer position within the UCS codespace.</P>
+
+<P>The control directive <EM>reverse solidus latin capital letter X
+digit four reverse solidus</EM> &quot;&#92;X4&#92;&quot; shall be
+followed by multiples of eight hexadecimal characters.  Each multiple
+of eight hexadecimal characters shall be the interpreted as a 32-bit
+number giving an integer position within the UCS codespace.</P>
+
+<P>The control directive <EM>reverse solidus latin capital letter X
+digit zero reverse solidus</EM> &quot;&#92;X0&#92;&quot; shall be used
+to indicate the end of the &quot;&#92;X2&#92;&quot; or
+&quot;&#92;X4&#92;&quot; hexadecimal character sequence.</P>
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This use of eight hexadecimal
+characters in the &quot;&#92;X4&#92;&quot; encoding predates the
+restriction of the UCS codespace to a maximum value of 10FFFF.  The
+first two characters in each eight character group will always
+be <em>digit zero</em>.</P>
+
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>String as stored</TH>	<TH>Code point</TH>	<TH>Character</TH></TR>
+</thead>
+<tbody>
+
+<TR><TD CLASS=mono>'&#92;X2&#92;03C0&#92;X0&#92;'</TD> 
+  <TD>U+03C0</TD>
+  <TD> <em>greek small letter pi</em> (&pi;)</TD>
+</TR>
+
+
+<TR><TD CLASS=mono>'&#92;X2&#92;03B103B203B3&#92;X0&#92;'</TD> 
+  <TD>U+03B1 U+03B2 U+03B3</TD>
+  <TD> <em>greek small letters alpha, beta, gamma</em> (&alpha;&beta;&gamma;)</TD>
+</TR>
+
+<TR><TD CLASS=mono>'&#92;X4&#92;001F638&#92;X0&#92;'</TD> 
+  <TD>U+1F638</TD>
+  <TD><em>grinning cat face with smiling eyes</em> (an emoticon, &#x1F638;)</TD>
+</TR>
+
+<TR><TD CLASS=mono>'&#92;X4&#92;001F638001F596&#92;X0&#92;'</TD> 
+  <TD>U+1F638 U+1F596</TD>
+  <TD><em>grinning cat face with smiling eyes, raised hand with part
+  between middle and ring fingers</em> (two emoticons, &#x1F638;
+  &#x1F596;)</TD>
+</TR>
+
+</tbody>
+</TABLE> 
+
+
+
+<H5><A NAME="clause-6-4-3-4"></A>6.4.3.4 Encoding U+0000 to U+00FF in a string</H5>
+
+The control directive <EM>reverse solidus latin capital letter X
+reverse solidus</EM> &quot;&#92;X&#92;&quot; followed by two
+hexadecimal characters shall encode a UCS code point in the range
+U+0000 to U+00FF.  The two hexadecimal characters shall be the
+interpreted as an 8-bit number giving the integer position within the
+UCS codespace.</P>
+
+<P>This control directive shall be used for UCS code points U+0000 to
+U+001F and code point U+007F.  This control directive may be used in
+place of UTF-8 encoded code points U+0080 to U+00FF when compatibility
+with earlier editions of the exchange structure encoding is
+desired.</P>
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The characters defined by ISO/IEC 10646
+and ISO/IEC 8859-1 are identical within this range.</P>
+
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>String as stored</TH><TH>Effective contents</TH><TH>Comments</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>'see &#92;X&#92;A7 4.1'</TD>
+    <TD>see &#167; 4.1</TD>
+    <TD>Contains <em>section sign</em>.</TD>
+</TR>
+
+<TR><TD CLASS=mono>'line one&#92;X&#92;0Aline two'</TD>
+    <TD>line one<BR>line two</TD>
+    <TD>Contains <em>line feed</em> control character.</TD></TR>
+</tbody>
+</TABLE>
+
+
+
+
+<H5><A NAME="clause-6-4-3-5"></A>6.4.3.5 Maximum string length</H5>
+
+<P>The maximum length of a string as stored in an exchange structure
+is 32769 octets, including the beginning and
+ending <EM>apostrophes</EM>. If embedded <EM>quotation
+marks</EM>, <EM>reverse solidi</EM>, <EM>apostrophes</EM>, print
+control directives (see <A href="clause12.htm">clause 12</A>) or
+characters encoded according to <A href="#clause-6-4-3-2">6.4.3.2</A>,
+<A href="#clause-6-4-3-3">6.4.3.3</A>, or 
+<A href="#clause-6-4-3-4">6.4.3.4</A> are included in the
+string as stored, the maximum length of the effective contents of the
+string will be less than 32767 graphic characters. The effective
+contents is the sequence of graphic characters after these encoding
+conventions have been resolved.</P>
+
+
+<H4><A NAME="clause-6-4-4"></A>6.4.4 Occurrence names</H4>
+<p>An occurrence name shall be a constant instance name, a
+constant value name, an entity instance name or a value instance name. 
+
+<P CLASS="example">
+NOTE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This edition of this part of ISO
+10303 allows constant values, constant entities, values instances and
+entity instances to be named and referenced in an exchange structure.
+Previous editions only allowed entity instances to be named and
+referenced (see clause <A href="clause4.htm#clause-4-3">4.3</A>).</P>
+
+<H4><A NAME="clause-6-4-4-1"></A>6.4.4.1 Constant instance names</H4>
+
+<P>A constant instance name shall be encoded as a <EM>number
+sign</EM>, &quot;#&quot;, followed by an UPPER character, followed by
+a sequence of UPPER or DIGIT characters.</P>
+
+<P>Constant instance names are references to entity instances defined
+in the EXPRESS schema. If there are multiple EXPRESS schemas defined
+in the <b>file_schema</b> of the exchange structure then the constant
+instance name shall reference an entity instance defined in the first
+schema (see <A href="clause8.htm#clause-8-2-4">clause 8.2.4</A>).</P>
+
+<P>The WSN for constant instance names is given
+in <A HREF="clause5.htm#table-2">Table 2</A> in the
+CONSTANT_INSTANCE_NAME production.</P>
+
+<P CLASS="example">EXAMPLE</P>
+
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Valid name expressions</TH>	<TH>Meaning</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>#FARADAY</TD>	<TD>Reference to constant named FARADAY in the EXPRESS schema</TD></TR>
+<TR><TD CLASS=mono>#INCH</TD>	<TD>Reference to constant named INCH in the EXPRESS schema</TD></TR>
+</tbody>
+</TABLE>
+
+<p>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Invalid name expressions</TH>	<TH>Problem</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>#23</TD>	<TD>Name begins with a digit</TD></TR>
+<TR><TD CLASS=mono>#INCHES</TD>	<TD>INCHES is not defined in the EXPRESS schema</TD></TR>
+<TR><TD CLASS=mono>#PI</TD>	<TD>PI is defined as a value in the EXPRESS schema</TD></TR>
+<TR><TD CLASS=mono>#Inch</TD>	<TD>All letters must be normalized to upper case</TD></TR>
+</tbody>
+</TABLE>
+
+
+<P>Constant instance names may be used in RHS_OCCURRENCE productions
+only (see <A HREF="clause5.htm#table-2">Table 2</A>).
+
+
+<H4><A NAME="clause-6-4-4-2"></A>6.4.4.2 Constant value names</H4>
+
+<P>A constant value name shall be encoded as an <EM>at sign</EM>,
+&quot;@&quot;, followed by an UPPER character, followed by a sequence
+of UPPER or DIGIT characters.</P>
+
+<P>Constant value names are references to values defined in the
+EXPRESS schema. If there are multiple EXPRESS schemas defined in
+the <b>file_schema</b> of the exchange structure then the constant
+value name shall reference a value defined in the first schema
+(see <A href="clause8.htm#clause-8-2-4">clause 8.2.4</A>).</P>
+
+<P>The WSN for constant value names is given
+in <A HREF="clause5.htm#table-2">Table 2</A> in the
+CONSTANT_VALUE_NAME production.</P>
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Valid name expressions</TH>	<TH>Meaning</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>@PI</TD>	<TD>Reference to the value of PI as defined in the EXPRESS schema</TD></TR>
+<TR><TD CLASS=mono>@E</TD>	<TD>Reference to the value of E as defined in the EXPRESS schema</TD></TR>
+</tbody>
+</TABLE>
+
+<p>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Invalid name expressions</TH>	<TH>Problem</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>@23</TD>	<TD>Name begins with a digit</TD></TR>
+<TR><TD CLASS=mono>@INCH</TD>	<TD>INCH is defined as an ENTITY instance in the EXPRESS schema</TD></TR>
+<TR><TD CLASS=mono>@Pie</TD>	<TD>All letters must be normalized to upper case</TD></TR>
+</tbody>
+</TABLE>
+
+
+<P>Constant value names may be used in RHS_OCCURRENCE productions only
+(see <A HREF="clause5.htm#table-2">Table 2</A>).
+
+
+<H4><A NAME="clause-6-4-4-3"></A>6.4.4.3 Entity instance names</H4>
+
+<P>An entity instance name shall be encoded as a <EM>number sign</EM>,
+&quot;#&quot;, followed by a sequence of DIGIT characters.  At least
+one character shall not be &quot;0&quot;. Leading zeros are not
+significant. An entity instance name shall not use the same integer as
+a value instance name.
+</P>
+
+<P CLASS="example">
+NOTE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The integer spaces for
+ENTITY_INSTANCE_NAME and VALUE_INSTANCE_NAME are not permitted to
+overlap because both types may be referenced using a URI, for example
+&quot;&lt;abc.stp#123> &quot; (see
+clause <A href="clause10.htm#clause-10-2-7">10.2.7</A>).</P>
+
+
+<P CLASS="example">
+NOTE 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Leading zeros in entity instance
+names are ignored so &quot;#001&quot; is the same identifier as
+&quot;#1&quot;.</P>
+
+<P>The WSN for entity instance names is given
+in <A HREF="clause5.htm#table-2">Table 2</A> in the
+ENTITY_INSTANCE_NAME production.</P>
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Valid name expressions</TH>	<TH>Meaning</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>#12</TD>	<TD>Names or refers to entity with identifier 12</TD></TR>
+<TR><TD CLASS=mono>#023</TD>	<TD>Names or refers to entity with identifier 23</TD></TR>
+</tbody>
+</TABLE>
+
+<p>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Invalid name expressions</TH>	<TH>Problem</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>#Faraday</TD>	<TD>Contains non-numeric character</TD></TR>
+<TR><TD CLASS=mono>#439A6</TD>	<TD>Contains non-numeric character</TD></TR>
+<TR><TD CLASS=mono>#+23</TD>	<TD>Contains '+' sign</TD></TR>
+<TR><TD CLASS=mono>#00.1</TD>	<TD>Contains decimal point</TD></TR>
+<TR><TD CLASS=mono>74</TD>	<TD>Does not begin with a <EM>number sign</EM></TD></TR>
+</tbody>
+</TABLE>
+
+<P>Entity instance names are used as references to entity
+instances. Both forward and backward references are permitted.  An
+entity instance name may be defined in the reference section
+(see <A href="clause10.htm">clause 10</A>) or a data section
+(<A href="clause11.htm">clause 11</A>).  Entity instance names may be
+used in LHS_OCCURRENCE and RHS_OCCURRENCE productions
+(see <A HREF="clause5.htm#table-2">Table 2</A>).
+
+<H4><A NAME="clause-6-4-4-4"></A>6.4.4.4 Value instance names</H4>
+
+<P>A value instance name shall be encoded as an <EM>at sign</EM>,
+&quot;@&quot;, followed by a sequence of DIGIT characters.  At least
+one character shall not be &quot;0&quot;. Leading zeros are not
+significant. An value instance name shall not use the same integer as
+an entity instance name.</P>
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This edition of this part of ISO
+10303 allows instance names to be assigned to values so that values
+can be defined in external files. See <A HREF="annexK.htm">annex K</A>
+for examples.</P>
+
+<P>The WSN for value instance names is given in <A HREF="clause5.htm#table-2">Table 2</A> 
+in the VALUE_INSTANCE_NAME production.</P>
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Valid name expressions</TH>	<TH>Meaning</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>@12</TD>	<TD>Names or refers to value with identifier 12</TD></TR>
+<TR><TD CLASS=mono>@023</TD>	<TD>Names or refers to value with identifier 23</TD></TR>
+</tbody>
+</TABLE>
+
+<P>Value instance names are used as references to values.  A value
+instance name is defined in the reference section
+(see <A href="clause10.htm">clause 10</A>).  Value instance names may
+be used in LHS_OCCURRENCE and RHS_OCCURRENCE productions
+(see <A HREF="clause5.htm#table-2">Table 2</A>).  A value instance
+name shall be defined in the reference section only.
+
+
+
+
+<H4><A NAME="clause-6-4-5"></A>6.4.5 Enumeration values</H4>
+
+<P>An enumeration value shall be encoded as a sequence of <EM>latin
+capital letters</EM> or <EM>digits</EM> beginning with a <EM>latin
+capital letter</EM> delimited by <EM>full stops</EM>. The meaning of a
+given enumeration value is determined by the EXPRESS schema and its
+associated definitions from the enumeration type declarations.</P>
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Under certain conditions, transfer
+of clear text files via electronic mail attachment has been observed
+to corrupt the <em>full stop</em> at the start or end of an
+enumeration value.  See <A HREF="annexA.htm#clause-A-2-2">A.2.2</A> for
+recommendations.</P>
+
+<P CLASS="example">EXAMPLE</P>
+
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Valid enumeration expressions</TH>	<TH>Meaning</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>.STEEL.</TD>	<TD>Indicates a value of STEEL</TD></TR>
+</tbody>
+</TABLE>
+
+<p>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Invalid enumeration expressions</TH>	<TH>Problem</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>.RED</TD>	<TD>Missing ending <EM>full stop</EM></TD></TR>
+<TR><TD CLASS=mono>.123.</TD>	<TD>Does not start with an alphabetic character.</TD></TR>
+</tbody>
+</TABLE>
+
+<H4><A NAME="clause-6-4-6"></A>6.4.6 Binary</H4>
+
+<P>A binary is a sequence of bits (0 or 1). A binary shall be encoded
+as determined by the following procedure.</P>
+
+<UL>
+
+<LI>count the number of bits in the sequence. Call the result p;</LI>
+
+<LI>determine a number n, 0 &#8804; n &#8804; 3, such that k=p+n is a
+multiple of four;</LI>
+
+<LI>left fill the binary with n zero bits. Divide the sequence into
+groups of four bits.</LI>
+
+<LI>precede the sequence with the 4-bit representation of n;</LI>
+
+<LI>if the decimal equivalent of a 4-bit group is 9 or less, add 48 to
+that decimal value to create an 8-bit byte; if the decimal equivalent
+of the 4-bit group is greater than 9, add 55 to that decimal value to
+create an 8-bit byte.</LI>
+
+</UL>
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a binary to hexadecimal
+conversion.</P>
+
+<UL>
+
+<LI>the encoding of a binary consists of k/4+1 hexadecimal digits. The
+first digit is the value of n. This is followed by the hexadecimal
+digits representing the binary;</LI>
+
+<LI>delimit the encoded binary with <EM>quotation marks</EM>
+&quot;&quot;&quot;.</P>
+
+</UL>
+
+<P CLASS="example">EXAMPLE</P>
+
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Binary value</TH>	<TH>Representation </TH></TR>
+</thead>
+<tbody>
+<TR><TD>'null' or 'empty'</TD>	<TD CLASS=mono>&quot;0&quot;</TD></TR>
+<TR><TD>0</TD>	<TD CLASS=mono>&quot;30&quot;</TD></TR>
+<TR><TD>1</TD>	<TD CLASS=mono>&quot;31&quot;</TD></TR>
+<TR><TD>111011</TD>	<TD CLASS=mono>&quot;23B&quot;</TD></TR>
+<TR><TD>100100101010</TD>	<TD CLASS=mono>&quot;092A&quot;</TD></TR>
+</tbody>
+</TABLE>
+
+
+<H3><A NAME="clause-6-5"></A>6.5 Anchor, reference and signature section encodings</H3>
+
+<P>The following encodings are used in the anchor, reference and
+signature sections.</P>
+
+<H4><A NAME="clause-6-5-1"></A>6.5.1 Resource</H4>
+
+<P>A resource shall be encoded as a URI preceded by a <EM>less-than
+sign</EM>, &quot;&lt;&quot; and followed by a <EM>greater-than
+sign</EM>, &quot;>&quot;.
+
+<P>The WSN for resources is given
+in <A HREF="clause5.htm#table-2">Table 2</A> in the RESOURCE
+production.
+
+<P CLASS="example">
+NOTE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In the anchor section the
+resource is on the right of the <EM>equals sign</EM> (&quot;=&quot;)
+and the anchor name is on the left see <A href="#clause-6-5-4">clause
+6.5.4</A>.
+
+<P CLASS="example">EXAMPLE 1</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Valid expression in the anchor section</TH>	<TH>Meaning</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>&lt;picture> = &lt;a.jpeg>;</TD>	<TD>Sets anchor &quot;picture&quot; to the resource &lt;a.jpeg> </TD></TR>
+<TR><TD CLASS=mono>&lt;BOM> = &lt;b.xml#123>;</TD>	<TD>Sets the anchor &quot;BOM&quot; to the resource &lt;b.xml#123> </TD></TR>
+</tbody>
+</TABLE>
+
+<P CLASS="example">
+NOTE 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A resource in the reference
+section must resolve to an entity instance or a value
+instance. See <A href="clause10.htm">clause 10</A> for the resolution
+process
+
+<P CLASS="example">EXAMPLE 2</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Valid expression in the reference section</TH>	<TH>Meaning</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>#10 = &lt;a#b>;</TD>	<TD>Sets entity instance 10 to the entity identified by the resource &lt;a#b> </TD></TR>
+<TR><TD CLASS=mono>@20 = &lt;c#d>;</TD>	<TD>Sets value instance 20 to the value identified by the resource &lt;c#d> </TD></TR>
+</tbody>
+</TABLE>
+
+<H5><A NAME="clause-6-5-2"></A>6.5.2 Universal Resource Identifier (URI)</H5>
+
+<P>A UNIVERSAL_RESOURCE_IDENTIFIER token
+of <A HREF="clause5.htm#table-2">Table 2</A> shall meet the
+requirements defined by the IETF
+(see <A href="clause3.htm#clause-3-1-7-1">3.1.7.1</A>).
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>External Reference</TH>	<TH>Example Usage</TH></TR>
+</thead>
+<tbody>
+<TR><TD>&lt;http://www.giant.com/examples/part.stpnc#first_workpiece&gt; </TD>
+  <TD>Reference to a workpiece in a STEP-NC file stored 
+at the given world wide web address</TD></TR>
+
+<TR><TD>&lt;building.ifc#first_floor&gt; </TD>
+ <TD>Reference to a floor in an IFC building on the current server</TD></TR>
+
+<TR><TD>&lt;file:///c:/users/jt_files/assembly.jt.#first_shape&gt; </TD>	
+ <TD>Reference to a shape in a JT file </TD></TR>
+</tbody>
+</TABLE>
+
+
+<H4><A NAME="clause-6-5-3"></A>6.5.3 URI Fragment identifier</H4>
+
+<P>A URI_FRAGMENT_IDENTIFIER token
+of <A HREF="clause5.htm#table-2">Table 2</A> is the name following
+the <EM>number sign</EM>, &quot;#&quot;, in a Universal Resource
+Identifier.
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Universal Resource Identifier</TH> <TH>Fragment Identifier</TH>	<TH>Example Usage</TH></TR>
+</thead>
+<tbody>
+<TR><TD>&lt;http://www.tool_vendor.com/mill.stp#tool_tip&gt;</TD> <TD>tool_tip </TD>	<TD>Fragment identifier for a point at the tip of a cutting tool</TD></TR>
+<TR><TD>&lt;#first_floor&gt;</TD><TD>first_floor </TD>	<TD>Fragment identifier for a floor in the current exchange structure </TD></TR>
+<TR><TD>&lt;http://www.plumber.com/structure.ifc#3F2504E0-4F89-11D3-9A0C-0305E82C3301&gt;</TD><TD>3F2504E0-4F89-11D3-9A0C-0305E82C3301 </TD>	<TD>Fragment identifier defined by a UUID (see <A HREF="annexG.htm">annex G</A>) </TD></TR>
+</tbody>
+</TABLE>
+
+
+<H4><A NAME="clause-6-5-4"></A>6.5.4 Anchor name</H4>
+
+<P>An anchor name shall be encoded as a URI Fragment identifier
+preceded by a <EM>less-than sign</EM>, &quot;&lt;&quot; and followed
+by a <EM>greater-than sign</EM>, &quot;>&quot;. At least one character
+in a URI Fragment identifier that references an anchor name shall not
+be a digit.
+
+<P CLASS="example">
+NOTE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; URI Fragment identifiers defined
+as digits are assumed to be references to occurrence names in exchange
+structures defined by previous editions of ISO
+10303-21. See <A href="clause10.htm#clause-10-2-7">10.2.7</A>.</P>
+
+<P>An anchor name that meets the requirements
+of <A HREF="annexG.htm">annex G</A> is a Universally Unique
+IDentitifer (UUID).
+
+<P CLASS="example">
+NOTE 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Anchors defined by a UUID can be
+found without a URI because they are universally unique.
+See <A href="clause10.htm#clause-10-2-2">10.2.2</A>.</P>
+
+<P>The WSN for anchor names is given
+in <A HREF="clause5.htm#table-2">Table 2</A> in the ANCHOR_NAME
+production.  Anchor names are used to define identifiers that can be
+externally referenced (see clause <A href="clause9.htm">9</A>).
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Valid expression in the anchor section</TH>	<TH>Meaning</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>&lt;a&gt; = 3.142;</TD>	<TD>Sets anchor &quot;a&quot; to 3.142 </TD></TR>
+<TR><TD CLASS=mono>&lt;b&gt; = @10;</TD>	<TD>Sets anchor &quot;b&quot; to value @10</TD></TR>
+<TR><TD CLASS=mono>&lt;c&gt; = #20;</TD>	<TD>Sets anchor &quot;c&quot; to entity #20</TD></TR>
+<TR><TD CLASS=mono>&lt;ad3f1724-19cf-4d19-94ef-eed90b7b4dde&gt; = 2.71828;</TD>	<TD>Sets anchor with the UUID &quot;ad3f1724-19cf-4d19-94ef-eed90b7b4dde&quot; to 2.71828</TD></TR>
+<TR><TD CLASS=mono>&lt;2f0cb220-355d-11e5-a2cb-0800200c9a66&gt; = @30;</TD>	<TD>Sets anchor with the UUID &quot;2f0cb220-355d-11e5-a2cb-0800200c9a66&quot; to value @30</TD></TR>
+<TR><TD CLASS=mono>&lt;3f553e90-355d-11e5-a2cb-0800200c9a66&gt; = #40;</TD>	<TD>Sets anchor with the UUID &quot;3f553e90-355d-11e5-a2cb-0800200c9a66&quot; to entity #40</TD></TR>
+</tbody>
+</TABLE>
+
+
+<H4><A NAME="clause-6-5-5"></A>6.5.5 Tag name</H4>
+
+<P>A tag name shall be encoded as a sequence of UPPER, LOWER and DIGIT
+characters. The first character shall be an UPPER or LOWER character.
+
+<P>The WSN for tag name is given
+in <A HREF="clause5.htm#table-2">Table 2</A> in the TAG_NAME
+production.  Tag names associate additional information with
+anchors. This information is not part of the information
+model.(see <A href="clause9.htm#clause-9-2-8">9.2.8</A>).
+
+<P CLASS="example">
+NOTE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tag names are allowed in this
+edition of this part of ISO 10303 so that programmers can create data
+structures to optimize traversals when an information model is
+distributed across many exchange structures linked by anchors and
+references.</P>
+
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Valid expression in the anchor section</TH>	<TH>Meaning</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono  style="white-space: nowrap">&lt;plate_edge&gt; = #20 {preparation:&lt;WELD_DC.XML&gt;}</TD>	<TD>Associates edge at #20 with file WELD_DC.XML using the tag name &quot;preparation&quot;</TD></TR>
+</tbody>
+</TABLE>
+
+<H4><A NAME="clause-6-5-6"></A>6.5.6 Base64</H4> A BASE64 token
+of <A HREF="clause5.htm#table-2">Table 2</A> is data encoded to the
+meet the requirements of the IETF
+(<A href="clause3.htm#clause-3-1-7-5">3.1.7.5</A>).  Base64 is used to
+encode signatures and message digests.
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Base64 encoding of a message digest</TH></TR>
+</thead>
+<tbody>
+<TR><TD CLASS=mono>873b48e9dd16ec9c7a8423faba7e75a7a9d19ea07abce2808d94b3176ee8bd60</TD></TR>
+</tbody>
+</TABLE>
+
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>

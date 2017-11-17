@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+
+<H2 CLASS="clause"><A NAME="clause-10"></A>10 Reference section</H2>
+
+<H3 CLASS="clause"><A NAME="clause-10-1"></A>10.1 Reference section structure</H3>
+
+<P>The syntax of the reference section is prescribed
+in <A HREF="clause5.htm#table-3">Table 3</A>. The reference section is
+optional. If a reference section is included in the exchange structure
+then it shall be given after the header section and any anchor section
+and before any data section or signature section. The section shall
+begin with the special token &quot;REFERENCE;&quot; and shall
+terminate with the special token &quot;ENDSEC;&quot;.
+
+<p>Each entry in the reference section shall associate an
+LHS_OCCURRENCE_NAME with a RESOURCE.  If the occurrence name is an
+ENTITY_INSTANCE_NAME then the resource shall identify an entity. If
+the occurrence name is a VALUE_INSTANCE_NAME then the resource shall
+identify a value.
+
+<P>Each occurrence name shall have one association only and it shall
+not be defined in the data sections of the exchange structure.
+
+<P CLASS="example">EXAMPLE</P>
+
+
+<TABLE CLASS="example">
+<thead><tr>
+ <th>Reference section structure</th>
+ <th>Comment</th>
+ </tr></thead>
+<tbody>
+<TR><TD>REFERENCE;</TD></TR>
+<TR><TD style="white-space: nowrap">#10 = &lt;http://www.giant.com/product.stp#shape&gt;;</TD><TD>/* Reference to a URI with fragment identifier see <A href="clause10.htm#clause-10-2">10.2</A> */</TD>
+<TR><TD style="white-space: nowrap">#20 = &lt;building_698.ifc&gt;;</TD><TD>/* Reference to a URI without fragment identifier see <A href="clause10.htm#clause-10-2-1">10.2.1</A>*/</TD></TR>
+<TR><TD style="white-space: nowrap">#30 = &lt;#10b9903b-fe1a-41dd-91e2-dd8bf06f262d&gt;;</TD><TD>/* Reference to a fragment identifier defined by a UUID see <A href="clause10.htm#clause-10-2-2">10.2.2</A> */</TD>
+<TR><TD style="white-space: nowrap">#40 = &lt;#wheel&gt;;</TD><TD>/* Reference to a fragment identifier defined in same file see <A href="clause10.htm#clause-10-2-3">10.2.3</A> */</TD>
+<TR><TD style="white-space: nowrap">#50 = &lt;http://www.giant.com/product.jt#shape&gt;;</TD><TD>/* Reference to a file in another format see <A href="clause10.htm#clause-10-2-4">10.2.4</A> */</TD></TR>
+<TR><TD style="white-space: nowrap">#60 = &lt;http://www.giant.com/product.stp#entity&gt;;</TD><TD>/* Reference to an entity instance see <A href="clause10.htm#clause-10-2-5">10.2.5</A> */</TD></TR>
+<TR><TD style="white-space: nowrap">@70 = &lt;http://www.giant.com/product.stp#value&gt;;</TD><TD>/* Reference to a value see <A href="clause10.htm#clause-10-2-6">10.2.6</A> */</TD></TR>
+<TR><TD style="white-space: nowrap">#80 = &lt;http://www.giant.com/product.stp#100&gt;;</TD><TD>/* Reference using edition 1 or edition 2 entity instance name see <A href="clause10.htm#clause-10-2-7">10.2.7</A> */</TD></TR>
+<TR><TD>ENDSEC;</TD></TR>
+</tbody>
+</TABLE>
+
+
+<H3 CLASS="clause"><A NAME="clause-10-2"></A>10.2 Reference to a URI</H3>
+
+<p>The reference shall resolve to a value or entity instance in an
+exchange structure defined by this part of ISO 10303, to a compressed
+archive that meets the requirements defined
+in <A HREF="annexA.htm#clause-A-4">annex A.4</A>, or to a directory
+that has the form of an uncompressed archive as defined in
+<A HREF="annexA.htm#clause-A-5">annex A.5</A>. 
+
+<p>The resource delivered shall contain an anchor with the same name
+as the URI_FRAGMENT_IDENTIFIER of the URI. The ANCHOR_ITEM identified
+by this anchor shall be the result of the reference. The identified
+ANCHOR_ITEM shall meet the requirements for an entity or value
+instance belonging to the <b>file_schema</b> of this exchange
+structure.
+
+<p>If the resource resolves to an anchor defined by another URI then
+the process shall be repeated.
+
+<p>If the resolution of the URI does not meet these requirements, then
+the result of the reference shall be the null_value (&quot;$&quot;).
+
+<P CLASS="example">EXAMPLE</P>
+
+<TABLE CLASS="example">
+<thead><tr>
+ <th>Reference</th>
+ <th>Comment</th>
+ </tr></thead>
+<tbody>
+<TR><TD style="white-space: nowrap">#1234 = &lt;http://www.giant.com/part_mill_assembly_246.stp#tool_item&gt;;</TD><TD>/* Reference to a tool item in a tool assembly */</TD></TR>
+<TR><TD style="white-space: nowrap">#1235 = &lt;building_698.ifc#7c9e6679-7425-40de-944b-e07fc1f90ae7&gt;;</TD><TD>/* Reference to product with the UUID shown (see <A HREF="annexG.htm#clause-G">annex G</A>)*/</TD></TR>
+<TR><TD style="white-space: nowrap">@1236 = &lt;http://www.giant.com/data.stp#value&gt;;</TD><TD>/* Reference to a value defined in another exchange structure */</TD></TR>
+</tbody>
+</TABLE>
+
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Circular references can be
+constructed by referencing a value in an external exchange structure
+that references back to the current reference in the current exchange
+structure. These references are invalid and must be resolved to the
+NULL value by the processing system.
+
+
+<H4 CLASS="clause"><A NAME="clause-10-2-1"></A>10.2.1 reference to a URI without a fragment identifier</H4>
+
+<p>If the resource does not include a URI_FRAGMENT_IDENTIFIER then the
+reference shall resolve to the null_value (&quot;$&quot;).
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead><tr>
+ <th>Reference</th>
+ <th>Comment</th>
+ </tr></thead>
+<tbody>
+<TR><TD style="white-space: nowrap">#10 = &lt;http://www.tool_company.com/shape.stp&gt;;</TD><TD>/* result is the null_value (&quot;$&quot;) */</TD></TR>
+</tbody>
+</TABLE>
+
+
+<H4 CLASS="clause"><A NAME="clause-10-2-2"></A>10.2.2 reference to a URI with a fragment identifier defined by a UUID</H4>
+
+<p>If a the resource defined by a URI is anchored by a Universally
+Unique Identifier (UUID) (see <A HREF="annexG.htm">annex G</A>) then
+the identifier shall be resolved to the entity or value anchored by
+that unique identifier.
+
+<p>If the resource has more than a URI_FRAGMENT_IDENTIFIER then the
+exchange structure identified by the URI must have an anchor with that
+UUID.
+
+<p>If the resource is defined by a URI_FRAGMENT_IDENTIFIER alone, then
+the processing system shall be responsible for finding a service that
+can identify the exchange structure containing the UUID.
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For example it may go to a registry
+service that might be a PLM or similar system to request the exchange
+structure.
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead><tr>
+ <th>Reference</th>
+ <th>Comment</th>
+ </tr></thead>
+<tbody>
+<TR><TD style="white-space: nowrap">#123 = &lt;http://www.step.com#97c6e1f0-3544-11e5-a2cb-0800200c9a66&gt;;</TD><TD>/* resolves to an entity anchored by the UUID which must be in the file returned by the server at the URI */</TD></TR>
+<TR><TD style="white-space: nowrap">#123 = &lt;#97c6e1f0-3544-11e5-a2cb-0800200c9a66&gt;;</TD><TD>/* resolves to an entity anchored by the UUID in an exchange structure found by a registry service */</TD></TR>
+<TR><TD style="white-space: nowrap">@abc = &lt;cutter.stp#825cd420-3547-11e5-a2cb-0800200c9a66&gt;;</TD><TD>/* resolves to a value anchored by the UUID which must be in the file identified by the URI */</TD></TR>
+</tbody>
+</TABLE>
+
+
+<H4 CLASS="clause"><A NAME="clause-10-2-3"></A>10.2.3 reference to a URI that is only a fragment identifier and is not a UUID</H4>
+
+<p>If the resource is defined by a URI_FRAGMENT_IDENTIFIER alone, and
+that fragment identifier is not a UUID, then the identifier shall be
+resolved to an anchor with the same name in the current exchange
+structure.
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead><tr>
+ <th>Reference</th>
+ <th>Comment</th>
+ </tr></thead>
+<tbody>
+<TR><TD style="white-space: nowrap">#123 = &lt;#wheel&gt;;</TD><TD>/* resolves to entity defined by local anchor */</TD></TR>
+<TR><TD style="white-space: nowrap">@124 = &lt;#size&gt;;</TD><TD>/* resolves to value defined by local anchor */</TD></TR>
+</tbody>
+</TABLE>
+
+
+<H4 CLASS="clause"><A NAME="clause-10-2-4"></A>10.2.4 reference to an exchange structure in another format</H4>
+
+<p>If the resource identifies a file in another format then the server
+identified by the URI shall convert the file to the requirements of
+this exchange structure.
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead><tr>
+ <th>Reference</th>
+ <th>Comment</th>
+ </tr></thead>
+<tbody>
+<TR><TD style="white-space: nowrap">#100 = &lt;http://www.design_archive.org/wheel.3dxml#shape&gt;;</TD><TD>/* Reference to a file in the 3DXML format */</TD></TR>
+<TR><TD style="white-space: nowrap">#200 = &lt;http:///www.design_archive.org/axle.jt#shape&gt;;</TD><TD>/* Reference to a file in the JT format */</TD></TR>
+<TR><TD style="white-space: nowrap">@300 = &lt;http:///www.design_archive.org/spreadsheet.xls#A6&gt;;</TD><TD>/* Reference to a spreadsheet in the XLS format */</TD></TR>
+</tbody>
+</TABLE>
+
+<H4 CLASS="clause"><A NAME="clause-10-2-5"></A>10.2.5 reference to a URI fragment that resolves to an entity instance</H4>
+
+<p>If the URI fragment identifier resolves to an entity instance then
+the LHS_OCCURRENCE_NAME shall be an entity instance name.
+
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead><tr>
+ <th>Reference</th>
+ <th>Comment</th>
+ </tr></thead>
+<tbody>
+<TR><TD style="white-space: nowrap">#100 = &lt;http://www.design_archive.org/hub.stp#tip&gt;;</TD><TD>/* Reference to an entity instance defined in the anchor section of hub.stp */</TD></TR>
+<TR><TD style="white-space: nowrap">#200 = &lt;http:///www.design_archive.org/axle.jt#top&gt;;</TD><TD>/* Reference to an entity instance defined in the anchor section of a STEP translation of axle.jt */</TD></TR>
+</tbody>
+</TABLE>
+
+<H4 CLASS="clause"><A NAME="clause-10-2-6"></A>10.2.6 reference to a URI fragment that resolves to a value</H4>
+
+<p>If the URI fragment identifier resolves to a value then the
+LHS_OCCURRENCE_NAME shall be a value instance name.
+
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead><tr>
+ <th>Reference</th>
+ <th>Comment</th>
+ </tr></thead>
+<tbody>
+<TR><TD style="white-space: nowrap">@100 = &lt;http://www.design_archive.org/hub.stp#diameter&gt;;</TD><TD>/* Reference to a value defined in the anchor section of hub.stp */</TD></TR>
+<TR><TD style="white-space: nowrap">@200 = &lt;http:///www.design_archive.org/axle.jt#length&gt;;</TD><TD>/* Reference to a value defined in the anchor section of a STEP translation of axle.jt */</TD></TR>
+</tbody>
+</TABLE>
+
+<P CLASS="example">
+NOTE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The value may be a simple type or a list structure.
+
+
+
+<H4 CLASS="clause"><A NAME="clause-10-2-7"></A>10.2.7 reference using a URI fragment that is an entity instance name</H4>
+
+<p>If the URI fragment identifier is an unsigned number that meets the
+requirements of an entity instance name, then it shall be resolved to
+the entity instance with that number in the referenced exchange
+structure and the null_value (&quot;$&quot;) otherwise.
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead><tr>
+ <th>Reference</th>
+ <th>Comment</th>
+ </tr></thead>
+<tbody>
+<TR><TD style="white-space: nowrap">#30 = &lt;http:///www.design_archive.org/legacy.stp#300&gt;;</TD><TD>/* Reference to entity instance #300 in legacy.stp */</TD></TR>
+</tbody>
+</TABLE>
+
+<P CLASS="example">
+NOTE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; References to instance names are
+allowed so that edition 3 exchange structures can reference edition 2
+data.
+
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>
+

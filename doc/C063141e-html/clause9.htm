@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+<H2 CLASS="clause"><A NAME="clause-9"></A>9 Anchor section</H2>
+
+<H3 CLASS="clause"><A NAME="clause-9-1"></A>9.1 Anchor section structure</H3>
+
+<P>The anchor section defines external names for instances in the
+exchange structure so that they can be referenced.
+
+<P>The syntax of the anchor section is prescribed
+in <A HREF="clause5.htm#table-3">Table 3</A>. The anchor section is
+optional.  If an anchor section is included in the exchange structure
+then it shall be given after the header section and before any
+reference, data or signature section.  The section shall begin with
+the special token &quot;ANCHOR;&quot; and shall terminate with the
+special token &quot;ENDSEC;&quot;.
+
+<P>Each entry in the anchor section shall define one external
+name. The anchor name shall not be used for any other anchor in the
+same exchange structure.  The anchor name shall meet the requirements
+defined in clause <A href="clause6.htm#clause-6-5-4">6.5.4</A>.  The
+anchor name shall be a UUID if it meets the requirements defined
+in <A HREF="annexG.htm">annex G</A>.
+
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Anchor section structure</TH><TH>Comment</TH></TR>
+</thead>
+<tbody>
+<TR><TD>ANCHOR;</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;82ff3c50-3610-11e5-a2cb-0800200c9a66&gt; = #10;</TD><TD>/* Anchor defined by an entity instance name <A href="clause9.htm#clause-9-2-1">9.2.1</A> */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;8eae4370-3610-11e5-a2cb-0800200c9a66&gt; = @20;</TD><TD>/* Anchor defined by a value instance name <A href="clause9.htm#clause-9-2-2">9.2.2</A> */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;9a9ec060-3610-11e5-a2cb-0800200c9a66&gt; = 30;</TD><TD>/* Anchor defined by a simple data type  <A href="clause9.htm#clause-9-2-3">9.2.3</A> */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;a3cee4d0-3610-11e5-a2cb-0800200c9a66&gt; = $;</TD><TD>/* Anchor defined by a null_value <A href="clause9.htm#clause-9-2-4">9.2.4</A> */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;bb2ac46e-3610-11e5-a151-feff819cdc9f&gt; = (1.1, 2.1, 3.1);</TD><TD>/* Anchor defined by a list <A href="clause9.htm#clause-9-2-5">9.2.5</A> */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;bb2ac770-3610-11e5-a151-feff819cdc9f&gt; = &lt;picture.jpg>;</TD><TD>/* Anchor defined by a resource <A href="clause9.htm#clause-9-2-6">9.2.6</A> */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;d1dbb491-dae8-409b-87dd-f21fd5bbb624&gt; = #INCH;</TD><TD>/* Anchor defined by an EXPRESS constant <A href="clause9.htm#clause-9-2-7">9.2.7</A> */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;1231ea63-d573-4d50-81f3-8bb0e9c1cbf5&gt; = #10 {ratio:196.73};</TD><TD>/* Anchor with a tag <A href="clause9.htm#clause-9-2-8">9.2.8</A> */</TD></TR>
+<TR><TD>ENDSEC;</TD></TR>
+</TABLE>
+
+
+<H3 CLASS="clause"><A NAME="clause-9-2"></A>9.2 Anchor item</H3>
+
+<P>Each ANCHOR shall associate an ANCHOR_NAME with an ANCHOR_ITEM. The
+anchor item shall describe how the anchor is represented in the
+exchange structure. The same anchor item may be used as the
+representation for multiple anchors and it may be null.
+
+<P CLASS="example">EXAMPLE</P>
+<thead>
+<TR><TH>Anchor section structure</TH><TH>Possible usage</TH></TR>
+</thead>
+<tbody>
+<TR><TD style="white-space: nowrap">&lt;tool_length&gt; = #100;</TD><TD>/* First usage of anchor item #100 */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;tool_height&gt; = #100;</TD><TD>/* Second usage of anchor item #100 */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;tool_tip_unused&gt; = $;</TD><TD>/* Instance unavailable in this version of the exchange structure */</TD></TR>
+</tbody>
+</TABLE>	
+	
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If two anchors in two exchange
+structures have the same name then it should be inferred that they
+describe different aspects, or different versions, of the same
+concept.  For example, a tool maker may use anchors for the same
+concept on a family of tool items.
+
+
+
+<H4 CLASS="clause"><A NAME="clause-9-2-1"></A>9.2.1 Anchor item defined by an entity instance name</H4>
+
+<p>If the anchor item is defined by an entity instance name (see
+clause <A href="clause6.htm#clause-6-4-4-3">6.4.4.3</A>) then the
+value of that anchor shall be the entity instance identified by that
+name.
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An entity instance name can be
+defined in the reference section in which case the value of the anchor
+item will be defined in a different exchange structure.
+
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Anchor</TH><TH>Possible usage</TH></TR>
+</thead>
+<tbody>
+<TR><TD style="white-space: nowrap">&lt;tool_length&gt; = #100;</TD><TD>/* First usage of entity #100 as an anchor item */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;tool_height&gt; = #100;</TD><TD>/* Second usage of entity #100 as an anchor item*/</TD></TR>
+</tbody>
+</TABLE>		
+
+
+<H4 CLASS="clause"><A NAME="clause-9-2-2"></A>9.2.2 Anchor item defined by a value instance name</H4>
+If the anchor item is defined by a value instance name (see clause
+<A href="clause6.htm#clause-6-4-4-4">6.4.4.4</A>) then the value of
+that anchor shall be the value identified by that name.
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A value instance is defined in the reference section.
+
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Anchor</TH><TH>Possible usage</TH></TR>
+</thead>
+<tbody>
+<TR><TD style="white-space: nowrap">&lt;length_ratio&gt; = @10;</TD><TD>/* First usage of value @10 as an anchor item */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;height_ratio&gt; = @10;</TD><TD>/* Second usage of value @10 as an anchor item */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;width_ratio&gt; = $;</TD><TD>/* Value unavailable in this version of the exchange structure */</TD></TR>
+</tbody>
+</TABLE>		
+
+
+<H4 CLASS="clause"><A NAME="clause-9-2-3"></A>9.2.3 Anchor item defined by a simple type</H4>
+<p>If the anchor item is defined by a simple type (see
+clause <A href="clause6.htm#clause-6-4">6.4</A>) then the value of the
+anchor shall be that simple type.
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Anchor</TH><TH>Possible usage</TH></TR>
+</thead>
+<tbody>
+<TR><TD style="white-space: nowrap">&lt;low_precision_pi&gt; = 3.142;</TD><TD>/* Anchor defined by a simple type */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;message&gt; = 'This is a message';</TD><TD>/* Anchor defined by a simple type */</TD></TR>
+</tbody>
+</TABLE>
+
+<H4 CLASS="clause"><A NAME="clause-9-2-4"></A>9.2.4 Anchor item defined by a null_value (&quot;$&quot;)</H4>
+
+<p>If the anchor item is defined by a null_value ("$") then the value
+of the anchor shall be the null_value.
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An anchor defined by the null_value
+may be a promissory usage that could not be met in this version of the
+exchange structure, but was met in a previous version, or will be met
+in future versions.</P>
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Anchor</TH><TH>Possible usage</TH></TR>
+</thead>
+<tbody>
+<TR><TD style="white-space: nowrap">&lt;tool_tip_unused&gt; = $;</TD><TD>/* Value unavailable in this version of the exchange structure */</TD></TR>
+</tbody>
+</TABLE>		
+
+<H4 CLASS="clause"><A NAME="clause-9-2-5"></A>9.2.5 Anchor item defined by a list structure</H4>
+
+<p>If the anchor item is defined by a ANCHOR_ITEM_LIST structure (see
+clause <A href="clause7.htm#clause-7-2">7.2</A>) then the value of
+that item shall be the list.
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Anchor</TH><TH>Possible usage</TH></TR>
+</thead>
+<tbody>
+<TR><TD style="white-space: nowrap">&lt;identity&gt; = ((1, 0, 0), (0, 1, 0), (0, 0, 1));</TD><TD>/* Anchor item defined as an identity matrix */</TD></TR>
+</tbody>
+</TABLE>
+
+<H4 CLASS="clause"><A NAME="clause-9-2-6"></A>9.2.6 Anchor item defined by a resource</H4>
+
+<p>If the anchor item is defined by a resource (see
+clause <A href="clause6.htm#clause-6-5-1">6.5.1</A>) then the value of
+that item shall be the resource.
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Anchors externalize
+information. They do not add information so they can be tagged with
+anything that meets the syntax requirements of this part of ISO
+10303.</P>
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Anchor</TH><TH>Possible usage</TH></TR>
+</thead>
+<tbody>
+<TR><TD style="white-space: nowrap">&lt;main_image&gt; = &lt;picture.jpg&gt;;</TD><TD>/* Anchor item defined by an image */</TD></TR>
+<TR><TD style="white-space: nowrap">&lt;sheet_values&gt; = (&lt;work.xls#A3&gt;,&lt;work.xls#A4&gt;,&lt;work.xls#A5&gt;);</TD><TD>/* Anchor item defined by a list of spreadsheet values  */</TD></TR>
+</tbody>
+</TABLE>
+
+
+<H4 CLASS="clause"><A NAME="clause-9-2-7"></A>9.2.7 Anchor item defined by an EXPRESS constant</H4>
+
+<p>If the anchor item is defined by an EXPRESS constant (see
+clauses <A href="clause6.htm#clause-6-4-4-1">6.4.4.1</A>
+and <A href="clause6.htm#clause-6-4-4-2">6.4.4.2</A>) then the value
+of that item shall be the value or instance defined by the constant in
+the first EXPRESS schema of the <b>file_schema</b>
+(see <A href="clause8.htm#clause-8-2-4">8.2.4</A>).
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Anchor</TH><TH>Possible usage</TH></TR>
+</thead>
+<tbody>
+<TR><TD style="white-space: nowrap">&lt;pi&gt; = #ARCHIMEDES_CONSTANT_PI;</TD><TD>/* Anchor item defined by the EXPRESS value constant for PI */</TD></TR>
+<TR><TD>&lt;units&gt; = (#IMPERIAL_LENGTH_INCH, #PLANE_ANGLE_RADIAN, #SOLID_ANGLE_STERADIAN);</TD><TD>/* Anchor item defined by a list of EXPRESS entity constants  */</TD></TR>
+</tbody>
+</TABLE>
+
+
+<H4 CLASS="clause"><A NAME="clause-9-2-8"></A>9.2.8 Anchor item with tags</H4>
+
+<p>A tag shall associate additional information with an anchor. This
+information shall be outside the scope of the EXPRESS schema that
+defines the exchange structure
+(<A href="clause8.htm#clause-8-2-4">8.2.4</A>).
+
+<P CLASS="example">
+NOTE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Applications can use tags to make
+an exchange structure easier to process.  For example, a tag may
+contain a data index that can be used to find values more rapidly.
+
+<P CLASS="example">
+NOTE 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The <b>file_name.name</b> entity
+of the header section can be used to indicate what types of anchors
+and tags are in an exchange structure
+(see <A href="clause8.htm#clause-8-2-3">8.2.3</A>).</P>
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Anchor</TH><TH>Possible usage</TH></TR>
+</thead>
+<tbody>
+<TR><TD style="white-space: nowrap">&lt;bedroom&gt; = #10 {link:&lt;bedroom.jpg&gt;};</TD><TD>/* Tag used to define source of additional information for anchored item */</TD></TR>
+<TR><TD>&lt;kitchen&gt; = #20 {label:'Price estimate'} {link:&lt;kitchen_cost.xls&gt;};</TD><TD>/* Tags used to define and label cost of anchored item */</TD></TR>
+</tbody>
+</TABLE>
+
+
+<P CLASS="example">
+NOTE 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <A HREF="annexF.htm">Annex F</A>
+describes an ECMAScript binding for accessing the tag information.
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>
+

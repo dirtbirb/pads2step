@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+
+<H2 CLASS="annex-clause"><A NAME="clause-H"></A>Annex H<BR>(informative)<BR><BR>Example of a complete exchange structure</H2>
+
+
+<H3><A NAME="clause-H-1"></A>H.1  Introduction</H3>
+
+<P>An example EXPRESS schema definitions, a table of short names and
+an exchange structure are presented below. This EXPRESS schema does
+not reflect the contents of any part of ISO 10303. </P>
+
+
+<H3><A NAME="clause-H-2"></A>H.2  Example schema</H3>
+
+<P>The EXPRESS schema definitions used for the exchange structure example.</P>
+
+<PRE CLASS="code">
+SCHEMA example_geometry;
+
+TYPE length_measure = NUMBER;
+END_TYPE;
+
+ENTITY geometry
+SUPERTYPE OF (ONEOF(point));
+END_ENTITY;
+
+ENTITY point
+SUPERTYPE OF (ONEOF(cartesian_point))
+SUBTYPE OF (geometry);
+END_ENTITY;
+
+ENTITY cartesian_point
+SUBTYPE OF (point);
+  x_coordinate  : length_measure;
+  y_coordinate  : length_measure;
+  z_coordinate  : OPTIONAL length_measure;
+END_ENTITY;
+
+TYPE edge_or_logical = SELECT (edge, edge_logical_structure);
+END_TYPE;
+
+ENTITY topology
+SUPERTYPE OF (ONEOF(vertex, edge, loop));
+END_ENTITY;
+
+ENTITY vertex
+SUBTYPE OF (topology);
+  vertex_point : OPTIONAL point;
+END_ENTITY;
+
+ENTITY edge
+SUBTYPE OF (topology);
+  edge_start   : vertex;
+  edge_end     : vertex;
+END_ENTITY;
+
+ENTITY edge_logical_structure;
+  edge_element : edge;
+  flag : BOOLEAN;
+END_ENTITY;
+
+ENTITY loop
+SUPERTYPE OF (ONEOF(edge_loop))
+SUBTYPE OF (topology);
+END_ENTITY;
+
+ENTITY edge_loop
+SUBTYPE OF (loop);
+  loop_edges : LIST [1:?] OF edge_or_logical;
+END_ENTITY;
+
+END_SCHEMA;
+</PRE>
+
+<H3><A NAME="clause-H-3"></A>H.3  Example short names</H3>
+
+<P>The following gives the short names for the schema above.</P>
+
+<TABLE CLASS="example">
+<thead><tr>
+ <th>Entity name</th>
+ <th>Short name</th>
+ </tr></thead>
+<tbody>
+<TR><TD CLASS=mono>cartesian_point</TD>	<TD CLASS=mono>cpt</TD></TR>
+<TR><TD CLASS=mono>vertex</TD>	<TD CLASS=mono>vx</TD></TR>
+<TR><TD CLASS=mono>edge</TD>	<TD CLASS=mono>ed</TD></TR>
+<TR><TD CLASS=mono>edge_logical_structure</TD>	<TD CLASS=mono>ed_strc</TD></TR>
+<TR><TD CLASS=mono>edge_loop</TD>	<TD CLASS=mono>ed_loop</TD></TR>
+</tbody>
+</TABLE>
+
+<H3><A NAME="clause-H-4"></A>H.4  Example exchange structure</H3>
+
+<P>The following is an example of a complete exchange structure. 
+
+<P CLASS="example">
+NOTE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The schema is only an example, so
+there is no schema registration id present in the schema_name
+attribute of the <B>file_schema</B> entity instance in the header
+section.</P>
+
+<PRE CLASS="code">
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('THIS FILE CONTAINS A SMALL SAMPLE STEP MODEL'),'3;1');
+FILE_NAME('EXAMPLE STEP FILE #1',
+'2013-02-11T15:30:00',
+('JOHN DOE',
+'ACME INC.',
+'METROPOLIS USA'),
+('ACME INC. A SUBSIDIARY OF GIANT INDUSTRIES','METROPOLIS USA'),
+'CIM/STEP VERSION2',
+'SUPER CIM SYSTEM RELEASE 4.0',
+'APPROVED BY JOE BLOGGS');
+FILE_SCHEMA(('EXAMPLE_GEOMETRY'));
+ENDSEC;
+DATA;
+/*
+    THE FOLLOWING 13 ENTITIES REPRESENT A TRIANGULAR EDGE LOOP
+*/
+#1=CPT(0.0,0.0,0.0);    /* THIS IS A CARTESIAN POINT ENTITY */
+#2=CPT(0.0,1.0,0.0);
+#3=CPT(1.0,0.0,0.0);
+#11=VX(#1);             /* THIS IS A VERTEX ENTITY */
+#12=VX(#2);
+#13=VX(#3);
+#16=ED(#11,#12);        /* THIS IS AN EDGE ENTITY */
+#17=ED(#11,#13);
+#18=ED(#13,#12);
+#21=ED_STRC(#17,.F.);   /* THIS IS AN EDGE LOGICAL STRUCTURE ENTITY */
+#22=ED_STRC(#18,.F.);
+#23=ED_STRC(#16,.T.);
+#24=ED_LOOP((#21,#22,#23));   /* THIS IS AN EDGE LOOP ENTITY */
+/*
+    OTHER SYNTACTICAL REPRESENTATIONS WERE POSSIBLE. THE PREVIOUS
+    EXAMPLE IS REPRESENTATIVE OF ONE POSSIBLE APPROACH.
+*/
+ENDSEC;
+END-ISO-10303-21;
+</PRE>
+
+<P CLASS="example">
+NOTE 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This example exchange structure
+has been edited to aid readability.  Unnecessary <EM>spaces</EM> have
+been added to aid readability.</P>
+
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>

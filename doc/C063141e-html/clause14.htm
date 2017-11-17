@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+<H2 CLASS="clause"><A NAME="clause-14"></A>14 Signature sections</H2>
+
+<H3 CLASS="clause"><A NAME="clause-14-1"></A>14.1 Signature section structure</H3>
+
+<P>The syntax of the signature section is prescribed
+in <A HREF="clause5.htm#table-3">Table 3</A>. The signature section is
+optional. If a signature section is included in the exchange structure
+then it shall be given after the content that is being verified by
+that signature. There may be multiple signature sections. Each section
+shall begin with the special token &quot;SIGNATURE;&quot; and shall
+terminate with the special token &quot;ENDSEC;&quot;.
+
+<P>Each signature shall verify the content that precedes the
+&quot;SIGNATURE;&quot; token including any previously defined
+signatures.
+
+<P>The signature shall be structured as defined by the Cryptographic
+Message Syntax (CMS) for a signature with external content. See
+clause <A href="clause3.htm#clause-3-1-7-6">3.1.7.6</A> for the
+definition of the CMS.
+
+<P CLASS="example">
+NOTE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; External because the data is
+included in the sections above the signature and not embedded into the
+signature.</P>
+
+<P>When computing the message_digest for the CMS, an implementation
+shall only include the characters in the alphabet defined
+in <A HREF="clause5.htm#table-1">Table 1</A>.  See
+clause <A href="clause3.htm#clause-3-1-7-7">3.1.7.7</A> for the
+definition of the message_digest.
+
+<P>The CMS structure shall be written into the exchange structure
+using the base64 encoding. See
+clause <A href="clause3.htm#clause-3-1-7-5">3.1.7.5</A> for the
+definition of base64.
+
+<P CLASS="example">
+EXAMPLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;		Three lines of a signature:</P>
+
+<PRE CLASS="example">
+
+SIGNATURE;
+MIIGpgYJKoZIhvcNAQcCoIIGlzCCBpMCAQExCzAJBgUrDgMCGgUAMAsGCSqGSIb3
+DQEHAaCCA9cwggPTMIICu6ADAgECAgEEMA0GCSqGSIb3DQEBCwUAMHoxEzARBgoJ
+kiaJk/IsZAEZFgNjb20xGTAXBgoJkiaJk/IsZAEZFglzdGVwdG9vbHMxFzAVBgNV
+...
+ENDSEC;
+</PRE>
+<P CLASS="example">
+NOTE 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The content of the signature is
+as described in RFC 5652 Section 5. The encoding of the signature is
+as described in RFC 4648 Section 4.</P>
+
+<P CLASS="example">
+NOTE 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; As
+per <A HREF="clause5.htm#table-3">Table 3</A>, the first signature is
+given after the &quot;ISO-10303-21;&quot; token and the rest follow
+each one verifying all the data in the alphabet that precedes the
+&quot;S&quot; character in the SIGNATURE token.</P>
+
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>
+

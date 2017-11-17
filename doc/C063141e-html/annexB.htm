@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+<H2 CLASS="annex-clause"><A NAME="clause-B"></A>Annex B<BR>(normative)<BR><BR>WSN notational conventions</H2>
+
+
+<P>The syntax of the exchange structure is defined in Wirth Syntax
+Notation (WSN) as published by Niklaus Wirth in Communications of the
+ACM, 20:11 (Nov 77), 822-823. The WSN consists of a set of productions
+or substitution rules. The element given on the left side of a
+production (i.e. before the equals sign) can be used to represent an
+occurrence of the pattern given on the right side. Elementary terms
+that appear only on the right side of such productions are called
+terminals. Elements that occur on the left side of a production are
+called non-terminals.</P>
+
+<P>The notational conventions are given below. Table B.1 presents WSN
+defined in itself.</P>
+
+<UL>
+<LI>a string in <EM>capital letters</EM> is an element of the
+language; the string is the name of the element (for
+convenience, <EM>small letters</EM> are used for undefined identifiers
+and commentary);</LI>
+
+<LI>any string enclosed in <EM>quotation marks</EM> is literally what
+is contained within the <EM>quotation marks</EM>. The one exception to
+this rule is a <EM>quotation mark</EM> within a literal. To accomplish
+this, the <EM>quotation mark</EM> is immediately repeated once. The
+sequence &quot;&quot;&quot;&quot; is interpreted as &quot;, and the
+sequence &quot;AB&quot;&quot;C&quot; is interpreted as AB&quot;C.</LI>
+
+<LI>the <EM>equals sign</EM> &quot;=&quot; indicates a production. The
+element on the left is defined to be the combination of the elements
+on the right. Any <EM>spaces</EM> appearing between the elements of a
+production are meaningless unless they appear within a literal. A
+production is terminated by a <EM>full stop</EM> &quot;.&quot;;</LI>
+
+<LI><EM>curly brackets</EM> &quot;{ }&quot; indicates zero or more
+repetitions;</LI>
+<LI><EM>square brackets</EM> &quot;[ ]&quot; indicate optional
+parameters;</LI>
+<LI><EM>vertical line</EM> &quot;|&quot; indicates the logical OR;</LI>
+<LI><EM>parentheses</EM> &quot;(&quot; &quot;)&quot; indicate priority
+operations. In particular, where they enclose elements separated
+by <EM>vertical lines</EM>, one of the elements is to be chosen in
+conjunction with any other operation.</LI>
+</UL>
+
+<P CLASS="example">
+EXAMPLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The sequence
+&quot;A(B|C|D)&quot; is equivalent to &quot;AB|AC|AD&quot;</P>
+
+<TABLE ALIGN="center" BORDER="1">
+<CAPTION>
+<A NAME="table-B-1"></A>Table B.1 &mdash; Wirth Syntax Notation (WSN) defined in itself
+</CAPTION>
+<TR>
+<TD>
+<PRE CLASS="code">
+SYNTAX         = { PRODUCTION }.
+
+PRODUCTION     = IDENTIFIER &quot;=&quot; EXPRESSION &quot;.&quot;.
+
+EXPRESSION     = TERM { &quot;|&quot; TERM }.
+
+TERM           = FACTOR { FACTOR }.
+
+FACTOR         = IDENTIFIER
+                   | LITERAL
+                   | &quot;[&quot; EXPRESSION &quot;]&quot;
+                   | &quot;(&quot; EXPRESSION &quot;)&quot;
+                   | &quot;{&quot; EXPRESSION &quot;}&quot; .
+
+IDENTIFIER     = letter { letter }.
+
+LITERAL        = &quot;&quot;&quot;&quot; character { character } &quot;&quot;&quot;&quot;.
+</PRE>
+</TD>
+</TR>
+</TABLE>
+
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>

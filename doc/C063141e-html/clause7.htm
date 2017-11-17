@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+
+<H2 CLASS="clause"><A NAME="clause-7"></A>7 Structured data types</H2>
+<P>Two list data types are allowed in the exchange
+structure.
+
+<H3 CLASS="clause"><A NAME="clause-7-1"></A>7.1 Parameter list</H3>
+
+<P>As defined in <A HREF="clause5.htm#table-3">Table 3</A> a
+LIST is a (possibly empty) sequence of PARAMETERs, each of which may
+be:</P>
+
+<UL>
+<LI>a simple type encoding, as described
+in <A href="clause6.htm#clause-6-4">6.4</A>, or</LI>
+<LI>the special token <EM>dollar sign</EM> (&quot;$&quot;), or</LI>
+<LI>a TYPED_PARAMETER, representing an instance of a select type
+(see <A href="clause12.htm#clause-12-1-8">12.1.8</A>), or</LI>
+<LI>a LIST, representing an instance of a (nested) structured
+type.</LI>
+</UL>
+
+<P>A given LIST may contain more than one of the above forms. In the
+exchange structure, a LIST begins with a
+<EM>left parenthesis</EM> &quot;(&quot; and ends with a matching
+<EM>right parenthesis</EM> &quot;)&quot;. Instances are separated
+by <EM>commas</EM>. LISTs can be nested to any depth.</P>
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Structured data type</TH>	<TH>Representation</TH></TR>
+</thead>
+<tbody>
+<TR><TD>List of Integer </TD>	<TD CLASS=mono>(0,1,2,3,7,2,4)</TD></TR>
+<TR><TD>List of String </TD>	<TD CLASS=mono>('CAT', 'HELLO')</TD></TR>
+<TR><TD>List of List of Real</TD>	<TD CLASS=mono>((0.0, 1.0, 2.0), (3.0, 4.0, 5.0))</TD></TR>
+<TR><TD>List of List of Real</TD>	<TD CLASS=mono>((0.0, 1.0, 2.0), ( ))</TD></TR>
+</tbody>
+</TABLE>
+
+<P CLASS="example">
+In the last List of List of Real, the second embedded list is empty.</P>
+
+<H3 CLASS="clause"><A NAME="clause-7-2"></A>7.2 Anchor item list</H3>
+
+<P>As defined in <A HREF="clause5.htm#table-3">Table 3</A> an
+ANCHOR_ITEM_LIST may be defined in the anchor section. 
+The list shall contain a sequence of values each of which may
+be:</P>
+<UL>
+<LI>a simple type encoding, as described
+in <A href="clause6.htm#clause-6-4">6.4</A>, or</LI>
+<LI>a resource encoding, as described
+in <A href="clause6.htm#clause-6-5-1">6.5.1</A>, or</LI>
+<LI>the special token <EM>dollar sign</EM> (&quot;$&quot;),
+<LI>an ANCHOR_ITEM_LIST, representing an instance of a (nested) structured
+type.</LI>
+</UL>
+<P>A given ANCHOR_ITEM_LIST may contain more than one of the above
+forms. In the exchange structure, an ANCHOR_ITEM_LIST begins with a
+<EM>left parenthesis</EM> &quot;(&quot; and ends with a matching
+<EM>right parenthesis</EM> &quot;)&quot;. Instances are separated
+by <EM>commas</EM>. ANCHOR_ITEM_LISTs can be nested to any depth.</P>
+
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Structured data type</TH>	<TH>Representation</TH></TR>
+</thead>
+<tbody>
+<TR><TD>List of URI </TD>	<TD CLASS=mono>(&lt;abc#d&gt;, &lt;def.xml&gt;)</TD></TR>
+<TR><TD>List of integers </TD>	<TD CLASS=mono>(1, 2, 3)</TD></TR>
+</tbody>
+</TABLE>
+
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+<H2 CLASS="annex-clause"><A NAME="clause-J"></A>Annex J<BR>(informative)<BR><BR>Examples of EXPRESS constants to define units</H2>
+
+
+<H3><A NAME="clause-J-1"></A>J.1  EXPRESS constants for basic units</H3>
+
+<P>The following example shows how to define the basic units of a typical STEP file
+as EXPRESS constants.  
+
+<PRE CLASS="code">
+CONSTANT
+plane_angle_radian : si_unit := named_unit (?) || plane_angle_unit () || si_unit (?, radian);
+solid_angle_steradian : si_unit := named_unit (?) || solid_angle_unit () || si_unit (?, steradian);
+length_millimeter : si_unit := named_unit (?) || length_unit () || si_unit (milli, metre);
+END_CONSTANT;
+
+CONSTANT
+seven_dimensions_a : dimensional_exponents := dimensional_exponents (0., 0., 0., 0., 0., 0., 0.);
+degree_to_radian : measure_with_unit := measure_with_unit (plane_angle_measure (0.01745329252), radian));
+plane_angle_degree : conversion_based_unit := conversion_based_unit ('degree', degree_to_radian)) 
+                                                   || named_unit (seven_dimensions_a)
+						   || plane_angle_unit ();
+END_CONSTANT;
+
+CONSTANT
+seven_dimensions_b : dimensional_exponents := dimensional_exponents (1., 0., 0., 0., 0., 0., 0.);
+inch_to_millimeter : measure_with_unit := measure_with_unit (length_measure (25.4), inch));
+imperial_length_inch : conversion_based_unit := conversion_based_unit ('inch', inch_to_millimetre)) 
+                                                   || named_unit (seven_dimensions_b)
+						   || length_unit ();
+END_CONSTANT;
+</PRE>
+
+<P CLASS="example">
+NOTE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; These examples are for illustration only.</P>
+
+<H3><A NAME="clause-J-2"></A>J.2  Exchange structure usage of the EXPRESS constants</H3>
+
+<P>The following example uses the previously defined EXPRESS constants to define a 
+geometric context for a STEP file. 
+
+<PRE CLASS="code">
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(
+/* description */ ('example of how to reference EXPRESS constants that define units'),
+/* implementation_level */ '4;3');
+
+FILE_NAME(
+/* name */ 'example.stp',
+/* time_stamp */ '2013-02-09T12:37:49-05:00',
+/* author */ (''),
+/* organization */ (''),
+/* preprocessor_version */ '',
+/* originating_system */ '',
+/* authorisation */ '');
+FILE_SCHEMA(('AP242_MANAGED_MODEL_BASED_3D_ENGINEERING_MIM_LF'));	/* AP242 Schema */
+ENDSEC;
+
+
+DATA;
+#10 = (
+GEOMETRIC_REPRESENTATION_CONTEXT(3)
+GLOBAL_UNIT_ASSIGNED_CONTEXT((#IMPERIAL_LENGTH_INCH, #PLANE_ANGLE_RADIAN, #SOLID_ANGLE_STERADIAN)
+REPRESENTATION_CONTEXT('','3D')
+);
+....
+ENDSEC;
+
+END-ISO-10303-21;
+</PRE>
+
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>
+

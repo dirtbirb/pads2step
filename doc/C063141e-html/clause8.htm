@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+<H2 CLASS="clause"><A NAME="clause-8"></A>8 Header section</H2>
+
+<H3><A NAME="clause-8-1"></A>8.1 Header section structure</H3>
+
+<P>The header section contains information that is applicable to the
+entire exchange structure. Every exchange structure shall contain a
+header section.
+
+<p>The header section shall begin with the special token
+&quot;HEADER;&quot; and shall terminate with the special token
+&quot;ENDSEC;&quot;.</P>
+
+
+<P>The header section shall contain one instance of each of the
+following entities: <B>file_description</B>,
+<B>file_name</B>, and <B>file_schema</B>, and they shall appear in
+that order.  Instances of <B>schema_population</B>,
+<B>file_population</B>, <B>section_language</B> and
+<B>section_context</B> 
+may appear after <B>file_schema</B>.
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Annexes <A HREF="annexH.htm">H</A> and
+<A HREF="annexI.htm">I</A> present examples of a header section.</P>
+
+<P>If instances of user-defined header section entities are present,
+they shall appear after the header section entity instances.  The
+syntax of the header section entity instances is given
+in <A HREF="clause5.htm#table-3">Table 3</A> in WSN.  Each entity name
+shall map to the KEYWORD of the HEADER_ENTITY
+production.  <A href="clause12.htm">Clause 12</A> provides mapping of
+simple and aggregate data types to the PARAMETER_LIST for the
+attribute values of these entity instances.</P>
+
+
+<H3><A NAME="clause-8-2"></A>8.2 Header section declarations</H3>
+
+<H3><A NAME="clause-8-2-1"></A>8.2.1 header section schema</H3>
+
+<P>This clause specifies header section entities and types that appear
+in the header section of the exchange structure. The header section
+entities are specified in EXPRESS.</P>
+
+<H4 CLASS="section-underlined">EXPRESS Specification:</H4>
+
+<PRE CLASS="code">
+*)
+SCHEMA header_section_schema;
+
+TYPE exchange_structure_identifier = STRING;
+END_TYPE;
+(*
+</PRE>
+
+<P>This schema specifies the header section entities that are specific
+to the process of transferring product data using the exchange
+structure.</P>
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The exchange_structure_identifier
+type serves the same purpose as the identifier type in ISO 10303-41 but
+has been defined separately in order to keep this part of ISO 10303
+independent from the data models defined in the ISO 10303 integrated
+resource series parts. </P>
+
+
+
+<H4><A NAME="clause-8-2-2"></A>8.2.2 file_description</H4>
+
+<P>The <B>file_description</B> specifies the version of this part of
+ISO 10303 used to create the exchange structure as well as its
+contents. </P>
+
+<H4 CLASS="section-underlined">EXPRESS Specification:</H4>
+<PRE CLASS="code">
+*)
+ENTITY file_description;
+  description          : LIST [1:?] OF STRING (256) ;
+  implementation_level : STRING (256) ;
+END_ENTITY;
+(*
+</PRE>
+
+
+<H4 CLASS="section-underlined">Attribute Descriptions:</H4>
+
+<P><B>description:</B> an informal description of the contents of this
+exchange structure.</P>
+
+<P><B>implementation_level:</B> an identification of the specification
+to which the encoding in this exchange structure conforms and any
+conformance options employed in that encoding. The value of this
+attribute shall indicate conformance to this version of this part of
+ISO 10303 by having either the value &quot;4;1&quot; the value
+&quot;4;2&quot; or the value &quot;4;3&quot;
+(see <A href="clause4.htm#clause-4-3">4.3</A>).
+The value for exchange structures adhering to syntactical conformance
+class 1 shall be &quot;4;1&quot;.
+The value for exchange structures adhering to syntactical conformance
+class 2 shall be &quot;4;2&quot;.
+The value for exchange structures adhering to syntactical conformance
+class 3 shall be &quot;4;3&quot;.</P>
+
+
+<P>If the following restrictions on the encoding are met, the value
+&quot;3;1&quot; may be used to indicate conformance to this version of
+this part of ISO 10303:</P>
+
+<UL>
+
+<LI>the exchange structure shall not contain an anchor section;</LI>
+
+<LI>the exchange structure shall not contain a reference section;</LI>
+
+<LI>the exchange structure header section shall not contain a
+SCHEMA_POPULATION entity;</LI>
+
+<LI>the string tokens within the exchange structure shall only encode
+the characters at U+0080 to U+10FFFF with the &quot;\X2\&quot; and
+&quot;\X4\&quot; control directives defined in
+<A href="clause6.htm#clause-6-4-3-3">6.4.3.3</A>;</LI>
+
+<LI>the exchange structure shall not contain a signature section;</LI>
+
+<LI>the exchange structure shall not reference EXPRESS constants;</LI>
+
+
+</UL>
+<P>If used, the value &quot;3;1&quot; shall designate exchange
+structures adhering to syntactical conformance class 1 of edition
+2.</P>
+
+
+<P>If the following additional restrictions on the encoding are met,
+the value &quot;2;1&quot; may be used to indicate conformance to this
+version of this part of ISO 10303:</P>
+
+<UL>
+<LI>the exchange structure shall contain a single data section, and
+the &quot;DATA&quot; keyword shall not be followed by a parenthesized
+PARAMETER_LIST;</LI>
+
+<LI>the exchange structure header section shall not contain
+FILE_POPULATION entities;</LI>
+
+<LI>the exchange structure header section shall not contain
+SECTION_LANGUAGE entities;</LI>
+
+<LI>the exchange structure header section shall not contain
+SECTION_CONTEXT entities;</LI>
+
+<LI>the enumerated values of an EXPRESS ENUMERATION shall not be
+encoded using short names.</LI>
+</UL>
+
+<P>If used, the value &quot;2;1&quot; shall designate exchange
+structures adhering to conformance class 1 of edition 1.</P>
+
+<P CLASS="example">
+NOTE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The general form for the value is
+&quot;v;cc&quot;, where v is the version number of this part of ISO
+10303, as specified in <A HREF="annexC.htm">annex C</A>, and cc is the
+encoding of conformance class.  Future versions of this part of ISO
+10303 may specify additional values for v and cc.</P>
+
+<P CLASS="example">
+NOTE 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The use of &quot;3;1&quot; is
+provided to support upward compatibility with implementations based on
+ISO 10303-21:2002, and the use of &quot;2;1&quot; is provided to
+support upward compatibility with implementations based on ISO
+10303-21:1994.</P>
+
+<P CLASS="example">
+NOTE 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The values "2;2" and "3;2" were
+used by earlier editions to indicate an encoding that used the
+external mapping for all entity instances.</P>
+
+
+
+
+<H4><A NAME="clause-8-2-3"></A>8.2.3 file_name</H4>
+
+<P>The <B>file_name</B> provides human readable information about the
+exchange structure.  With the exception of the name and time_stamp
+attributes, the contents of the attributes of this entity are not
+defined by this part of ISO 10303.</P>
+
+<H4 CLASS="section-underlined">EXPRESS Specification:</H4>
+
+<PRE CLASS="code">
+*)
+ENTITY file_name;
+  name                 : STRING (256) ;
+  time_stamp           : time_stamp_text ;
+  author               : LIST [ 1 : ? ] OF STRING (256) ;
+  organization         : LIST [ 1 : ? ] OF STRING (256) ;
+  preprocessor_version : STRING (256) ;
+  originating_system   : STRING (256) ;
+  authorization        : STRING (256) ;
+END_ENTITY;
+
+&nbsp;
+TYPE time_stamp_text = STRING(256);
+END_TYPE;
+(*
+</PRE>
+
+
+<H4 CLASS="section-underlined">Attribute Descriptions:</H4>
+
+<P><B>name:</B> the string of graphic characters used to name this
+exchange structure. Two exchange structures with the same name shall
+use compatible representations for anchors with the same anchor name.
+
+<p>The use of an object identifier within the name is recommended but
+not required as it provides unambiguous identification of the anchor
+structure.
+
+<p>If an object identifier is provided, it shall have the form
+specified in ISO/IEC 8824-1. The use of object identifiers within this
+International Standard is described in clause 3 of ISO 10303-1.
+
+<P CLASS="example">EXAMPLE</P>
+<TABLE CLASS="example">
+<thead>
+<TR><TH>name </TH>	<TH>Example usage</TH></TR>
+</thead>
+<tbody>
+<TR><TD>brep_shape</TD>	<TD>Exchange structure has the anchors of a Brep shape model</TD></TR>
+<TR><TD>PMI{ 1 2 10303 501 0 1 1 1 }</TD><TD>Exchange structure has the anchors of a PMI model version defined by the OID</TD></TR>
+</tbody>
+</TABLE>
+</P>
+
+
+<P><B>time_stamp:</B> the date and time specifying when the exchange
+structure was created. The contents of the string shall correspond to
+the extended format for the complete calendar date as specified in ISO
+8601 concatenated to the extended format for the time of the day as
+specified either in 4.3.1.1 or in 4.3.3 of ISO 8601. The date and time
+shall be separated by the <EM>latin capital letter T</EM> as specified
+in 4.4.1 of ISO 8601. The alternate formats of 4.3.1.1 and 4.3.3
+permit the optional inclusion of a time zone specifier.</P>
+
+<P><B>author:</B> the name and mailing address of the person
+responsible for creating the exchange structure.</P>
+
+<P><B>organization:</B> the group or organization with whom the author
+is associated.</P>
+
+<P><B>preprocessor_version:</B> the system used to create the exchange
+structure, including the system product name and version.</P>
+
+<P><B>originating_system: </B> the system from which the data in this
+exchange structure originated.</P>
+
+<P><B>authorization: </B> the name and mailing address of the person
+who authorized the sending of the exchange structure.</P>
+
+<P CLASS="example">EXAMPLE</P>
+
+
+<TABLE CLASS="example">
+<thead>
+<TR><TH>Time stamp element </TH>	<TH>Complete extended format</TH></TR>
+</thead>
+<tbody>
+<TR><TD>Calendar Date<BR>12 April 1993</TD>	<TD>1993-04-12</TD></TR>
+<TR><TD>&nbsp;</TD></TR>
+<TR><TD>Time of the Day<BR>27 minutes 46 seconds<BR>past 15 hours</TD>	<TD>15:27:46</TD></TR>
+<TR><TD>&nbsp;</TD></TR>
+<TR><TD>Time Zone<BR>5 hours west of Greenwich</TD>	<TD>Time Zone field is optional<BR>-05:00</TD></TR>
+<TR><TD>&nbsp;</TD></TR>
+<TR><TD>Above date and time encoded<BR>within the Time_Stamp field</TD>	<TD CLASS=mono>1993-04-12T15:27:46-05:00</TD></TR>
+</tbody>
+</TABLE>
+
+
+<H4><A NAME="clause-8-2-4"></A>8.2.4 file_schema</H4>
+
+<P>The <B>file_schema</B> entity identifies the EXPRESS schemas that
+specify the entity instances in the data sections. The
+attribute <B>schema_identifiers</B> shall consist of a list of
+strings, each of which shall contain the name of the schema optionally
+followed by the object identifier assigned to that schema.</P>
+
+<P>If the name of a schema contains <EM>small letters</EM>,
+such <EM>small letters</EM> shall be converted to the
+corresponding <EM>capital letters</EM>. Only <EM>capital letters</EM>
+shall occur in strings of the <B>schema_name</B>. </P>
+
+<P>If an object identifier is provided, it shall have the form
+specified in ISO/IEC 8824-1. The use of object identifiers within this
+International Standard is described in clause 3 of ISO 10303-1. When
+available, the use of the object identifier is recommended as it
+provides unambiguous identification of the schema.</P>
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The general form of an object
+identifier is a sequence of space-delimited integers.  The sequence is
+enclosed within <EM>braces</EM> (&quot;{&quot;, &quot;}&quot;).</P>
+
+<H4 CLASS="section-underlined">EXPRESS Specification:</H4>
+<PRE CLASS="code">
+*)
+ENTITY file_schema;
+  schema_identifiers : LIST [1:?] OF UNIQUE schema_name;
+END_ENTITY;
+
+TYPE schema_name = STRING(1024);
+END_TYPE;
+(*
+</PRE>
+
+
+<H4 CLASS="section-underlined">Attribute Descriptions:</H4>
+
+<P><B>schema_identifiers: </B> the schemas that specify the entity
+instances in the data section.</P>
+
+<P CLASS="example">
+EXAMPLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The instance below identifies an
+EXPRESS schema called 'CONFIG_CONTROL_DESIGN':</P>
+
+<PRE CLASS="example">
+FILE_SCHEMA (('CONFIG_CONTROL_DESIGN'));
+</PRE>
+
+<P CLASS="example">
+The instance below uses an object identifier to indicate a specific version of an EXPRESS schema called 'AUTOMOTIVE_DESIGN':</P>
+<PRE CLASS="example">
+FILE_SCHEMA (('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 }'));
+</PRE>
+
+<H4><A NAME="clause-8-2-5"></A>8.2.5 schema_population</H4>
+
+<P>The <B>schema_population</B> identifies the collection of instances
+that comprise the schema population of the exchange structure for the
+purpose of determining schema conformance to the first schema of the
+<b>file_schema</b> (see
+clause <A href="clause8.htm#clause-8-2-4">8.2.4</A>).  The header
+section of an exchange structure shall contain at most
+one <B>schema_population</B> instance.
+
+<P>The schema population shall contain all entity instances in all
+data sections in the exchange structure.  Additional members of the
+population shall be determined as follows:
+<ul>
+<li>If a schema_population is present then the schema population shall
+  include the schema population of each exchange structure in the set of
+  external_file_locations;
+
+<li>If the exchange structure
+  includes a reference section, then the schema population shall
+  include the schema populations of all exchange structures referenced by 
+  URIs in the reference section.
+
+<li>
+Each entity instance shall appear at most once in the schema
+  population.
+</ul>
+
+<P CLASS="example">
+NOTE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The definition of schema
+population is transitive. If file A references file B and file B
+references file C then the schema population of A includes the schema
+populations of both B and C.</P>
+
+<P CLASS="example">
+EXAMPLE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A file may have multiple
+references to the same entity instance because of duplicate
+references, Universal Resource Identifiers that resolve to the same
+address, or other reasons.  In such cases, the instance only appears
+once in the schema population.
+
+<p>
+Each external_file_location shall be represented by three strings that
+define an address, an optional time_stamp and an optional copy of the message_digest
+of the referenced file (see clause <A href="clause14.htm">14</A>).
+
+<p>
+If the file at the address does not resolve to an exchange structure then no instances
+from that file shall be included in the schema population.
+
+<p>
+If a time stamp is included and its value describes a date and time
+after the date and time in the <B>file_name</B> of the header of the
+referenced exchange structure, then the referenced exchange structure
+has not been changed since this reference was created.
+
+<p>
+If a message_digest is included then it validates the integrity of the
+referenced file. A message digest shall be given only if the exchange
+structure has at least one signature section. The message digest shall
+use the hash algorithm chosen for the first signature section.
+
+<H4 CLASS="section-underlined">EXPRESS Specification:</H4>
+<PRE CLASS="code">
+*)
+ENTITY schema_population;
+  external_file_identifications : LIST [ 1 : ? ] OF LIST [1:3] OF STRING;
+END_ENTITY;
+  
+(*
+</PRE>
+<H4 CLASS="section-underlined">Attribute Descriptions:</H4>
+
+<p><B>external_file_identifications:</B> list of external addresses
+for the files whose schema populations are to be included in the
+schema population of this file. Each address shall be represented as a
+triple of strings. If the second or third string is not set then it
+shall be represented as a null value &quot;$&quot;.</P>
+
+<ul>
+<li>The first string shall be the address of the referenced exchange
+structure represented as a Universal Resource Identifier (see
+clause <A href="clause6.htm#clause-6-5-1">6.5.1</A>) encoded as a STRING (see
+clause <A href="clause6.htm#clause-6-4-3">6.4.3</A>)</P>
+
+<li>The second string shall be a time_stamp describing the date and
+time when the external resource was last visited. The string
+describing the date and time shall meet the requirements for
+time_stamp_text of clause
+<A href="clause8.htm#clause-8-2-3">8.2.3</A>.</P>
+
+<li>The third string shall be the message_digest for the referenced file.
+The message_digest shall be a Base64 encoded string
+(see clause <A href="clause3.htm#clause-3-1-7-5">3.1.7.5</A>).
+</ul>
+
+<P CLASS="example">
+NOTE 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Including the message_digest of
+the referenced file in the schema population means that when this file
+is signed then the referenced file is also being signed.
+</P>
+
+
+
+<P CLASS="example">
+EXAMPLE 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sample instantiation for a
+schema population:</P>
+
+<PRE CLASS="example">
+SCHEMA_POPULATION((('http://www.acme.net/design.stp','2012-12-09T17:00:00',$),
+('http://www.giant.com/facets.stl','2013-01-11T19:00:00','0c1c87c6e7318529d36eb36b6f16deaeefb7af422033372c8fb5e94fb0af346b'),
+('http://www.giant.com/assembly.stp','2013-01-11T19:00:00','f243b19fb3c9f4f1a71edb9ec6390d15987b443ade7ad3081a174ff421ef8fe7')));
+</PRE>
+
+
+<P CLASS="example">
+NOTE 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Files that are not exchange
+structures may be included in the schema population so that their
+contents can also be validated using a signature.
+
+
+<H4><A NAME="clause-8-2-6"></A>8.2.6 file_population</H4>
+
+<P>The <B>file_population</B> entity identifies a collection of entity
+instances within the schema population defined in
+<A href="clause8.htm#clause-8-2-5">8.2.5</A> for the purpose of determining
+schema conformance to a particular EXPRESS schema.  The collection of
+entity instances shall be determined by applying an algorithm
+identified by the attribute <B>determination_method</B> to the set of
+data sections identified by the attribute <B>governed_sections</B>. If
+no value is provided for <B>governed_sections</B>, the algorithm shall
+be applied to all data sections in the schema population.</P>
+
+<P>An exchange structure may contain zero, one, or
+many <B>file_population</B> instances. A data section name may appear
+in the <B>governed_sections</B> attribute of zero, one, or
+many <B>file_population</B> instances.</P>
+
+<P CLASS="example">
+NOTE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Clause <A HREF="annexE.htm#clause-E-2">E.2</A> defines three possible
+determination methods.</P>
+
+<P CLASS="example">
+NOTE 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If no value is provided for the
+governed_sections attribute, the attribute is encoded by a <EM>dollar
+sign</EM> (&quot;$&quot;), as specified
+in <A href="clause12.htm#clause-12-2-2">12.2.2</A>, and not as an
+empty list.</P>
+
+<H4 CLASS="section-underlined">EXPRESS Specification:</H4>
+<PRE CLASS="code">
+*)
+ENTITY file_population;
+  governing_schema      : schema_name;
+  determination_method  : exchange_structure_identifier;
+  governed_sections     : OPTIONAL SET [ 1 : ? ] OF section_name;
+END_ENTITY;
+
+TYPE section_name = exchange_structure_identifier;
+END_TYPE;
+(*
+</PRE>
+
+
+<H4 CLASS="section-underlined">Attribute Descriptions:</H4>
+
+<P><B>governing_schema:</B> name of the EXPRESS schema that applies to
+population of entity instances identified by this header
+section <B>file_population</B> entry. The schema name must appear in
+the header section <B>file_schema</B> entry.</P>
+
+<P><B>determination_method:</B> string of graphic characters used to
+identify an algorithm to be used for selecting entity instances in the
+exchange.</P>
+
+<P><B>governed_sections:</B> the names of the data sections that are
+used as input to the determination method.</P>
+
+
+
+<H4><A NAME="clause-8-2-7"></A>8.2.7 section_language</H4>
+
+<P>The <B>section_language</B> entity identifies the default language
+for string values in a data section.  The
+attribute <B>default_language</B> shall contain the name of the
+language.  The name of the language shall be encoded using the Alpha-3
+bibliographic code specified in ISO 639-2.</P>
+
+<P>The attribute <B>section</B> shall contain the name of a data
+section in the exchange structure for which the default language shall
+apply.  If the exchange structure contains a single, unnamed, data
+section, no value shall be provided for the attribute <B>section</B>
+(see <A href="clause12.htm#clause-12-2-2">12.2.2</A>).  The header
+section of an exchange structure shall contain at most
+one <B>section_language</B> instance where no value is provided for
+the attribute <B>section</B>.  If present, the default language
+encoded by this instance shall apply to all data sections in the
+exchange structure for which no other <B>section_language</B> instance
+applies.</P>
+
+<P CLASS="example">
+EXAMPLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Some possible values for
+default_language are 'eng' for English, 'fre' for French, 'rus' for
+Russian, or 'ger' for German.</P>
+
+<H4 CLASS="section-underlined">EXPRESS Specification:</H4>
+<PRE CLASS="code">
+*)
+ENTITY section_language;
+  section          : OPTIONAL section_name;
+  default_language : language_name;
+UNIQUE
+  UR1: section;
+END_ENTITY;
+
+TYPE language_name = exchange_structure_identifier;
+END_TYPE;
+(*
+</PRE>
+
+
+<H4 CLASS="section-underlined">Attribute Descriptions:</H4>
+
+<P><B>section:</B> name of the data section for which the
+default_language is to apply.</P>
+
+<P><B>default_language:</B> name of the language used for string
+values.</P>
+
+
+
+<H4><A NAME="clause-8-2-8"></A>8.2.8 section_context</H4>
+
+<P>The <B>section_context</B> entity identifies information describing
+the contexts within which the instances encoded in the exchange
+structure are applicable.</P>
+
+<P>The attribute <B>section</B> shall contain the name of a data
+section in the exchange structure for which the context identifiers
+shall apply.  If the exchange structure contains a single, unnamed,
+data section, no value shall be provided for the
+attribute <B>section</B>
+(see <A href="clause12.htm#clause-12-2-2">12.2.2</A>).  The header
+section of an exchange structure shall contain at most
+one <B>section_context</B> instance where no value is provided for the
+attribute <B>section</B>.  If present, the context identifiers encoded
+by this instance shall apply to all data sections in the exchange
+structure for which no other <B>section_context</B> instance
+applies.</P>
+
+<H4 CLASS="section-underlined">EXPRESS Specification:</H4>
+<PRE CLASS="code">
+*)
+ENTITY section_context;
+  section             : OPTIONAL section_name;
+  context_identifiers : LIST [1:?] OF context_name;
+UNIQUE
+  UR1: section;
+END_ENTITY;
+
+TYPE context_name = STRING;
+END_TYPE;
+(*
+</PRE>
+
+
+<H4 CLASS="section-underlined">Attribute Descriptions:</H4>
+
+<P><B>section: </B>name of the data section for which the
+context_identifiers are to apply.</P>
+
+<P><B>context_identifiers:</B> identifiers which convey contextual
+information about instances encoded in the exchange structure.</P>
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An application protocol may define
+symbolic identifiers for each application protocol conformance class.
+The context identifiers for a section may indicate a partial list of
+application protocol conformance classes satisfied by the data in the
+section.</P>
+<P CLASS="example">
+EXAMPLE 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Language and context
+identifier assignments for an exchange structure with a single,
+unnamed, data section.</P>
+
+
+<PRE CLASS="example">
+HEADER;
+	.
+	.
+FILE_SCHEMA(('GEOMETRY'));
+SECTION_LANGUAGE ($,'eng'); -----------------&gt; A 
+SECTION_CONTEXT ($,('tag_a')); --------------&gt; B 
+ENDSEC;
+DATA;
+	.
+ENDSEC;
+</PRE>
+
+<P CLASS="example">A: Assign the language encoded 'eng' (English) to
+the data section.</P>
+<P CLASS="example">B: Assign the context tag 'tag_a' to the data
+section.</P>
+
+<P CLASS="example">EXAMPLE 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Language
+and context identifier assignments for an exchange structure with
+several data sections.</P>
+
+<PRE CLASS="example">
+HEADER;
+	.
+	.
+FILE_SCHEMA(('GEOMETRY'));
+SECTION_LANGUAGE ('DS1','ger'); -------------&gt; A 
+SECTION_LANGUAGE ('DS2','epo'); -------------&gt; B 
+SECTION_LANGUAGE ($,'haw'); -----------------&gt; C 
+SECTION_CONTEXT ('DS1',('tag_a','tag_b')); --&gt; D 
+SECTION_CONTEXT ('DS2',('tag_c')); ----------&gt; E 
+SECTION_CONTEXT ($,('tag_d')); --------------&gt; F 
+ENDSEC;
+DATA ('DS1',('GEOMETRY'));
+	.
+ENDSEC;
+DATA ('DS2',('GEOMETRY'));
+	.
+ENDSEC;
+DATA ('DS3',('GEOMETRY'));
+	.
+ENDSEC;
+DATA ('DS4',('GEOMETRY'));
+	.
+ENDSEC;
+</PRE>
+
+<P CLASS="example">A:	Assign the language encoded 'ger' (German) to
+the data section named 'DS1'.</P>
+<P CLASS="example">B: Assign the language encoded 'epo' (Esperanto) to
+the data section named 'DS2'.</P>
+<P CLASS="example">C: Assign the language encoded 'haw' (Hawaiian) to
+all data sections that do not otherwise have a language assignment.
+These are the sections named 'DS3' and 'DS4'.</P>
+<P CLASS="example">D: Assign the context identifiers 'tag_a' and
+'tag_b' to the data section named 'DS1'.</P>
+<P CLASS="example">E: Assign the context identifier 'tag_c' to the
+data section named 'DS2'.</P>
+<P CLASS="example">F: Assign the context identifier 'tag_d' to all
+data sections that do not otherwise have a context identifier
+assignment.  These are the sections named 'DS3' and 'DS4'.</P>
+
+<PRE CLASS="code">
+*)
+END_SCHEMA;
+(*
+</PRE>
+
+
+<H3><A NAME="clause-8-3"></A>8.3 User-defined header section
+entities</H3>
+
+<P>User-defined header section entity instances may be placed in the
+header section with specific restrictions as listed below:</P>
+
+<UL>
+<LI>a) User-defined header section entity instances shall conform to
+the same syntax of all header section entity instances with the
+additional requirement that the first character of the keyword shall
+be an <EM>exclamation mark</EM> &quot;!&quot;.</P>
+
+<LI>b) The attributes of user-defined header section entities shall
+have EXPRESS data types and shall be mapped to the header section as
+specified in <A href="clause12.htm">clause 12</A>.</LI>
+</UL>
+
+<P CLASS="example">EXAMPLE</P>
+<PRE CLASS="example">
+HEADER;
+	.
+	.
+FILE_SCHEMA(('GEOMETRY'));
+!A_SPECIAL_ENTITY ('ABC',123); -------&gt; USER DEFINED ENTITY 
+	.
+	.
+ENDSEC;
+</PRE>
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>

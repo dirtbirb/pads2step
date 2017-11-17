@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+<H2 CLASS="annex-clause"><A NAME="clause-L"></A>Annex L<BR>(informative)<BR><BR>Guidelines for printing the exchange structure</H2>
+
+
+<H3><A NAME="clause-L-1"></A>L.1  Print control directives</H3>
+
+<P>The exchange structure allows the optional inclusion of directives
+that explicitly control a printed representation of the
+structure. Where such directives are not included but a printed
+representation of the exchange structure is to be created, the set of
+implicit print control guidelines specified in G.2 should be used. The
+explicit print control directives override the implicit print control
+guidelines.</P>
+
+<H3><A NAME="clause-L-2"></A>L.2  Explicit print control directives</H3>
+
+
+<P>Explicit print control directives may be used in those cases where
+the sender needs accurate control of the printed appearance of the
+exchange structure. </P>
+
+<P>The directive <EM>reverse solidus latin capital letter N reverse
+solidus</EM> &quot;&#92;N&#92;&quot; indicates that the first
+character immediately following the directive appears at the start of
+a new printed line. The directive <EM>reverse solidus latin capital
+letter F reverse solidus</EM> &quot;&#92;F&#92;&quot; indicates that
+the printing continues at the start of a new page. In either case, the
+print control directive itself should not be printed.</P>
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The printing of the exchange
+structure will normally not be controlled by the explicit or implicit
+print control directives. It is assumed that the print control
+directives will only be used in those circumstances where the sender
+requires control over the printed appearance of the exchange
+structure. This situation may occur if the exchange structure is part
+of a legal contract.</P>
+
+<H3><A NAME="clause-L-3"></A>L.3  Implicit print control directives</H3>
+
+<P>When printing the exchange structure, the following directives may
+be used in the absence of explicit print control directives:</P>
+<UL>
+<LI>a) printed lines should be left justified;</LI>
+<LI>b) each section should begin at the start of a new printed
+line;</LI>
+<LI>c) header section entities should begin at the start of a new
+printed line;</LI>
+<LI>d) an instance name preceding the <EM>equals sign</EM>
+&quot;=&quot; should begin on a new printed line;</LI>
+<LI>e) tokens other than strings and binaries should not be broken
+across printed lines. Strings and binaries should be broken only if
+they do not fit on a single printed line. Directive h) determines
+where strings and binaries should be broken;</LI>
+<LI>f) comments should begin on a new printed line;</LI>
+<LI>g) a token separator other than a comment should not be broken
+across printed lines. A comment will be broken if it does not fit on a
+printed line. Directive h) determines where a comment will be
+broken;</LI>
+<LI>h) printed lines should be at most 72 characters long. If a
+character would be printed in the 73rd position of a line, this
+character should be printed on the first position of a new printed
+line instead.</LI>
+</UL>
+
+
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>
+

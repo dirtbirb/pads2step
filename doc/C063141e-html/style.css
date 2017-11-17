@@ -1,0 +1,123 @@
+
+
+
+DIV.contents UL { padding-left: 2em; }
+DIV.contents UL LI { margin-top: 0; margin-bottom: 0; list-style-type: none; }
+DIV.contents UL LI.clause { margin-top: 1em; }
+
+DIV.framecontents UL { padding-left: 0em; }
+DIV.framecontents UL LI { margin-top: 1em; margin-bottom: 0; list-style-type: none; }
+
+DIV.index P { margin: 0em 1em 0em 1em; }
+DIV.index P.idx2 { text-indent: 2em; }
+
+DIV.termdef H5 { margin-bottom: 0; }
+DIV.termdef P { margin-top: 0; }
+
+
+DIV.title_heading {
+    border-top:1px solid black; 
+    border-bottom:1px solid black; 
+    padding-top: 0.3em; 
+    padding-bottom: 0.3em; 
+    margin-top:2em; 
+}
+
+DIV.title_heading P {
+    padding:0; margin:0; 
+}
+
+P.pagefoot { margin-top: 3em; }
+P.pagehead { font-weight: bold; text-align: right; margin-bottom: 2em; }
+
+
+
+H1, H2, H3, H4, H5, H6 {
+    margin: 2em 0em 1em 0em;
+    font-size: 125%;
+}
+
+H2.unum   { }
+H2.clause { margin-top: 2em; }
+H2.annex-clause { margin-top: 2em; text-align: center; }
+H6.table-title {  margin-top: 3em; text-align: center; }
+H4.section-underlined {
+    margin: 1em 0em;
+    font-size: 100%;
+    font-weight: medium;
+    text-decoration: underline ;
+}
+
+
+CAPTION { 
+    margin: 0.5em 0em 1em 0em;
+    font-size: 14pt;
+    font-weight: Bold;
+    caption-side: top; 
+}
+
+
+
+P.example {
+    font-size: 80%;
+    margin-left: 2em;
+}
+
+TABLE.example {
+    font-size: 80%; margin-left: 2em;
+}
+TABLE.example TH {
+    text-align: left;
+    text-decoration: underline;
+    padding-bottom: 0.5em;
+    padding-right: 2em;
+}
+TABLE.example TR TD {
+    vertical-align: top;
+    padding-right: 2em;
+}
+
+TABLE.example TR TD.mono {
+    vertical-align: top;
+    padding-right: 2em;
+    font-size: 8pt;
+    font-weight: medium;
+    font-style: Regular;
+    font-family: "monospace";
+}
+
+PRE.code { }
+PRE.example {
+    margin: 0pt 0pt 0pt 29pt; 
+    font-size: 8pt;
+}
+
+SPAN.example-mono {
+    font-size: 8pt;
+    font-weight: medium;
+    font-style: Regular;
+    font-family: "monospace";
+}
+
+
+TABLE.charset { border-collapse: collapse; }
+TABLE.charset TD.noborder { border: none; }
+TABLE.charset TD {
+    padding: 2pt 2em;
+    text-align: center;
+    border:1px solid black; 
+    font-family: "Courier New";
+    font-size: 10pt;
+    font-weight: medium;
+}
+TABLE.charset TH {
+    padding: 2pt 2em;
+    text-align: center;
+    border:1px solid black; 
+    border-bottom: 3px double black; 
+    font-family: "Courier New";
+    font-size: 10pt;
+    font-weight: normal;
+}
+
+

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ISO 10303-21</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p class=pagehead>ISO 10303-21:2016(E)</p>
+
+
+<H2 CLASS="annex-clause"><A NAME="clause-I"></A>Annex I<BR>(informative)<BR><BR>Example of a distributed exchange structure</H2>
+
+
+<H3><A NAME="clause-I-1"></A>I.1  Introduction</H3>
+
+<P>This edition allows the content of an exchange structure to be
+distributed between multiple files. The distribution does not change
+the meaning of the content only the location. The example below
+illustrates by distributing the content of the example given
+in <A HREF="annexH.htm#clause-H-4">annex H.4</A> between two
+files.</P>
+
+
+<H3><A NAME="clause-I-2"></A>I.2  Example distributed exchange structure</H3>
+
+<P>The following example assumes that Giant Industries has been taken
+over and in the new environment Acme Inc. defines vertices from points
+supplied by Giant.
+
+<P>Giant has included a message digest for the Acme file in its schema
+population (see
+clause <A href="clause8.htm#clause-8-2-5">8.2.5</A>). The Giant files
+has a signature which verifies both its contents and the contents of
+the Acme file because of the message digest.
+
+<PRE CLASS="code">
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('THIS FILE REPRESENTS THE SAME SMALL SAMPLE STEP MODEL AS ANNEX H'),'4;2');
+FILE_NAME('www.giant.com/first_file.stp',
+'2013-02-11T16:30:00',
+('JANE BOSS',
+'GIANT INDUSTRIES.',
+'MEGALOPOLIS USA'),
+('GIANT INDUSTRIES','MEGALOPOLIS USA'),
+'CIM/STEP VERSION3',
+'SUPER CIM SYSTEM RELEASE 5.0',
+'APPROVED BY MR. BIG');
+FILE_SCHEMA(('EXAMPLE_GEOMETRY'));
+SCHEMA_POPULATION((('ftp://ftp.acme.net/second_file.stp',$,'44245c2ff046a5d65be9a33242d8c8c9ba9002d387d8b113dd1516bee735ab60')));
+ENDSEC;
+
+ANCHOR;
+&lt;POINT_1> = #1;
+&lt;POINT_2> = #2;
+&lt;POINT_3> = #3;
+&lt;POINT_4> = #4;
+&lt;POINT_5> = #5;
+&lt;POINT_6> = $;          /* PROMISSORY USAGE */
+ENDSEC;
+
+REFERENCE;
+#11 = &lt;ftp://ftp.acme.net/second_file.stp#vertex_1>;
+ENDSEC;
+
+DATA;
+/*
+    THE FOLLOWING ENTITIES REPRESENT ALL BUT ONE VERTEX OF A TRIANGULAR EDGE LOOP
+*/
+#1=CPT(0.0,0.0,0.0);    /* CARTESIAN POINTS HAVE BEEN ANCHORED SO THEY CAN BE REFERENCED */
+#2=CPT(0.0,1.0,0.0);
+#3=CPT(1.0,0.0,0.0);
+#4=CPT(0.0,2.0,0.0);    /* NEW POINTS CREATED TO GIVE ACME MORE OPTIONS */
+#5=CPT(2.0,0.0,0.0);
+#12=VX(#2);             /* ONE VERTEX HAS BEEN MOVED TO THE OTHER FILE */
+#13=VX(#3);
+#16=ED(#11,#12);        /* EDGE DATA HAS NOT CHANGED, #11 IS DEFINED IN THE REFERENCE SECTION*/
+#17=ED(#11,#13);
+#18=ED(#13,#12);
+#21=ED_STRC(#17,.F.);   /* EDGE LOGICAL STRUCTURE ENTITY ALSO UNCHANGED*/
+#22=ED_STRC(#18,.F.);
+#23=ED_STRC(#16,.T.);
+#24=ED_LOOP((#21,#22,#23));   /* EDGE LOOP ENTITY ALSO UNCHANGED*/
+/*
+    OTHER DISTRIBTUTIONS ARE POSSIBLE. ONLY DISTRIBUTING ONE ENTITY
+    IS UNLIKELY IN PRACTICE AND MAY RESULT IN POOR PERFORMANCE
+*/
+ENDSEC;
+END-ISO-10303-21;
+SIGNATURE
+A1yBCCQAc27kxxdf3iMQTxg+4jKqYRN6TPnHmV3ZQfyFwmj5Bf76SkvHx0DnJN3O
+fpzh2x7n4Ui+nxuu7JeuP3YYNWj4Qo8Etn/3/26nRKdM3tTWapUo3F7Ul5GPOEi+
+uZ/jYNyagLwvulNFM5sqUdI01Nx6C38O1NTUsbCpIZ39X/M2i7DBNQQ72qxWCiWW
+JJfCygnf9TwdlAMR+WzBzb4qzUH682wWyeCU5TgYYLY1XFcUrM2Wts0Y3yGvXSLI
+uZGoEQNdblctS0ogEub2nPXyJDAbH337gCvljQPwBld/xGU4hgwZE4dSlRc51kGH
+...
+ENDSEC;
+</PRE>
+
+<P>The Acme subsidiary file only contains one entity. 
+
+
+<PRE CLASS="code">
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('THIS FILE REPRESENTS A SUBSIDIARY STEP MODEL FOR FIRST FILE'),'4;2');
+FILE_NAME('ftp.acme.net/second_file.stp',
+'2013-02-11T17:30:00',
+('JOHN DOE',
+'ACME INC.',
+'METROPOLIS USA'),
+('ACME INC. A SUBSIDIARY OF GIANT INDUSTRIES','METROPOLIS USA'),
+'CIM/STEP VERSION2',
+'SUPER CIM SYSTEM RELEASE 4.0',
+'APPROVED BY JOE WILLING');
+FILE_SCHEMA(('EXAMPLE_GEOMETRY'));	/* SCHEMA POPULATION IS IMPLICIT */
+ENDSEC;
+
+ANCHOR;
+&lt;vertex_1> = #11;
+ENDSEC;
+
+REFERENCE;
+#1 = &lt;http://www.giant.com/first_file.stp#POINT_1>;		/* REFERENCE BACK TO FIRST FILE */
+ENDSEC;
+
+DATA;
+/*
+    THE FOLLOWING ENTITY WAS MOVED TO THIS FILE
+*/
+#11=VX(#1);             
+ENDSEC;
+END-ISO-10303-21;
+</PRE>
+
+<P CLASS="example">
+NOTE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To aid readability the entity
+instance names in this example are the same as in
+<A HREF="annexH.htm#clause-H-4">annex H.4</A> but this is not required
+and unlikely in practice. Unnecessary <EM>spaces</EM> and <EM>new
+lines</EM> have been added.</P>
+
+
+
+<p class=pagefoot>&copy; ISO 2016 &mdash; All rights reserved
+</body>
+</html>
