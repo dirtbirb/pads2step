@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 from datetime import datetime   # Date and time representation
-from math import sqrt           # Square root
+import sys
+import math
 
 def spliterator(line, sep=' ', filt=''):
     ''' Split a line, drop empty segments, return a filtered list of results '''
@@ -217,14 +218,15 @@ def pads2step(pads):
             write( var(j.j) + "=STYLED_ITEM('',(#{0}),#{1})".format(j.j-1, j.j-3) )
             ret = j.j
             write( var(j.j) + "=COMPOSITE_CURVE_SEGMENT(.CONTINUOUS.,.T.,#{0})".format(j.j-4) )
-            write( var(j.j) + "=CURVE_STYLE('',{0},POSITIVE_LENGTH_MEASURE({1}),#5)".format(j_font, w) )
+            write( var(j.j) + "=CURVE_STYLE('',#{0},POSITIVE_LENGTH_MEASURE({1}),#5)".format(j_font, w) )
             return ret
 
         def write_line(x0, y0, w, seg):
             x, y, = seg
-            d = sqrt((x-x0)**2 + (y-y0)**2)
+            d = math.sqrt((x-x0)**2 + (y-y0)**2)
 
-            write( "#{0}=DIRECTION('',({1}.E0,{2}.E0,0.E0))".format(j.j, vect(x0,x), vect(y0,y)))
+            if x0 != x and y0 != y: print(y0, y)
+            write( "#{0}=DIRECTION('',({1},{2},0.E0))".format(j.j, vect(x0,x), vect(y0,y)))
             write( "#{0}=VECTOR('',#{1},{2})".format(j.j, j.j-1, d) )
             write( "#{0}=CARTESIAN_POINT('',({1},{2},0.E0))".format(j.j, x0,y0) )
             write( "#{0}=LINE('',#{1},#{2})".format(j.j, j.j-1,j.j-2) )
@@ -232,14 +234,14 @@ def pads2step(pads):
             return write_shape_end(w)
 
         def write_arc(x0, y0, w, seg):
-            x1, y1, ab, aa, ax1, ay1, ax2, ay2, = seg
+            x, y, ab, aa, ax1, ay1, ax2, ay2, = seg
             r = (ax2-ax1)/2
-            xc, yc = (x0 + x1)/2, (y0 + y1)/2
+            xc, yc = (ax2 + ax1)/2, (ay2 + ay1)/2
 
-            write( "#{0}=CARTESIAN_POINT('',({1}.E0,{2}.E0,0.E0))".format(j.j, xc, yc) )
+            write( "#{0}=CARTESIAN_POINT('',({1},{2},0.E0))".format(j.j, xc, yc) )
             write( "#{0}=DIRECTION('',(0.E0,0.E0,1.E0))".format(j.j) )
-            write( "#{0}=DIRECTION('',(1.E0,0.E0,0.E0))".format(j.j) )
-            write( "#{0}=AXIS2_PLACEMENT_3D('',{1})".format(j.j, var_list(j.j-1,j.j-2,j.j-3)) )
+            write( "#{0}=DIRECTION('',({1},{2},0.E0))".format(j.j, vect(x0,x), vect(y0,y)) )
+            write( "#{0}=AXIS2_PLACEMENT_3D('',{1})".format(j.j, var_list(j.j-3,j.j-2,j.j-1)) )
             write( "#{0}=CIRCLE('',#{1},{2})".format(j.j, j.j-1, r) )
             write( "#{0}=TRIMMED_CURVE('',#{1},(PARAMETER_VALUE({2})),(PARAMETER_VALUE({3})),.T.,.UNSPECIFIED.)".format(j.j, j.j-1, ab, aa) )
             return write_shape_end(w)
@@ -276,6 +278,70 @@ def pads2step(pads):
 
             a = write_arc(x0, y0, w, [x1, y1, 0, 180, ax1, ay1, ax2, ay2])
             b = write_arc(x1, y1, w, [x0, y0, 180, 180, ax1, ay1, ax2, ay2])
+            return write_comp(a, b)
+
+        w_default = 0.02
+        def write_pad_circle(x, y, r):
+            w = w_default
+            x0, y0 = x-r, y
+            x1, y1 = x+r, y
+            ax1, ay1 = x-r, y-r
+            ax2, ay2 = x+r, y+r
+
+            a = write_arc(x0, y0, w, [x1, y1, 0, 180, ax1, ay1, ax2, ay2])
+            b = write_arc(x1, y1, w, [x0, y0, 180, 180, ax1, ay1, ax2, ay2])
+            return write_comp(a, b)
+
+        def write_pad_rectangle(x, y, r, corner, ori, l, offset):
+            # TODO: support rounded/chamfered corners
+            # TODO: offset??
+
+            w = w_default
+            r = r/2
+            l = l/2
+
+            sin, cos = math.sin(math.radians(ori)), math.cos(math.radians(ori))
+            x_f, y_f = r*sin + l*cos, r*cos + l*sin
+
+            x_l, x_r = x-x_f, x+x_f
+            y_t, y_b = y+y_f, y-y_f
+
+            a = write_line(x_l, y_t, w, (x_r, y_t)) # Top
+            b = write_line(x_r, y_t, w, (x_r, y_b)) # Right
+            c = write_line(x_r, y_b, w, (x_l, y_b)) # Bottom
+            d = write_line(x_l, y_b, w, (x_l, y_t)) # Left
+            return write_comp(a, b, c, d)
+
+        def write_pad_square(x, y, r):
+            return write_pad_rectangle(x, y, r, 0, 0, r, 0)
+
+        def write_pad_oval(x, y, r, ori, l, offset):
+            # TODO: offset???
+
+            w = w_default
+            r = r/2
+            l = l/2 - r
+            sin, cos = math.sin(math.radians(ori)), math.cos(math.radians(ori))
+            x_f, y_f = (r*sin + l*cos), (r*cos + l*sin)
+
+            x_l, x_r = x-x_f, x+x_f
+            y_t, y_b = y+y_f, y-y_f
+
+            ax1_1, ay1_1 = x_r-r, y_b
+            ax2_1, ay2_1 = x_r+r, y_t
+
+            ax1_2, ay1_2 = x_l-r, y_b
+            ax2_2, ay2_2 = x_l+r, y_t
+
+            a = write_line(x_l, y_t, w, (x_r, y_t)) # Top
+            b = write_arc(x_r, y_t, w, [x_r, y_b, 0, 180, ax1_1, ay1_1, ax2_1, ay2_1]) # Right
+            c = write_line(x_r, y_b, w, (x_l, y_b)) # Bottom
+            d = write_arc(x_l, y_b, w, [x_l, y_t, 0, 180, ax1_2, ay1_2, ax2_2, ay2_2]) # Left
+            return write_comp(a, b, c, d)
+
+        def write_pad_annular(x, y, r_out, r_in):
+            a = write_pad_circle(x, y, r_out)
+            b = write_pad_circle(x, y, r_in)
             return write_comp(a, b)
 
         j = j()
@@ -358,15 +424,55 @@ def pads2step(pads):
         write( var(j.j) + "=STYLED_ITEM(''," + var_list(j.j-1) + "," + var(j_font) + ")" )
 
         # Shapes
-        indices = []
+        shapes = []
         for piece in pads.pieces:
             t = piece.type
             if t in ("OPEN", "CLOSED", "COPOPN", "COPCLS", "KPTCLS", "BRDCUT", "BRDCCO"):
-                indices.append( write_shape(piece) )
+                shapes.append( write_shape(piece) )
             elif t in ("CIRCLE", "COPCIR", "KPTCIR"):
-                indices.append( write_circle(piece) )
+                shapes.append( write_circle(piece) )
+
+        # Find default pad stack for terminals
+        for pad in pads.pads:
+            if pad.pin == 0:
+                pad_0 = pad
+                break
+        else: print("No pad 0 found!")
+
+        # Terminals
+        for i in range(1,len(pads.terminals)+1):
+
+            # Find matching pad stack
+            for pad in pads.pads:
+                if pad.pin == i:
+                    pad_match = pad
+                    break
+            else: pad_match = pad_0
+
+            # Get top layer
+            for layer in pad_match.layers:
+                if layer.n == -2:
+                    pad_match = layer
+                    break
+            else: print("No top layer found for pin {0}!".format(i-1))
+
+            # Write appropriate shape
+            x, y = pads.terminals[i-1][0][0], pads.terminals[i-1][0][1]
+            if pad_match.shape in ('R', 'RA', 'RT'):
+                shapes.append( write_pad_circle(x, y, pad_match.width) )
+            elif pad_match.shape in ('S', 'SA', 'ST'):
+                shapes.append( write_pad_square(x, y, pad_match.width) )
+            elif pad_match.shape == 'A':
+                shapes.append( write_pad_annular(x, y, pad_match.width, pad_match.intd) )
+            elif pad_match.shape == 'OF':
+                shapes.append( write_pad_oval(x, y, pad_match.width, pad_match.ori, pad_match.length, pad_match.offset) )
+            elif pad_match.shape == 'RF':
+                shapes.append( write_pad_rectangle(x, y, pad_match.width, pad_match.corner, pad_match.ori, pad_match.length, pad_match.offset) )
+            else: print("WARNING: Skipped unrecognized pad shape {0}".format(pad_match.shape))
+
+        # Finish shapes
         j_set = j.j
-        write( "#{0}=GEOMETRIC_SET('',{1})".format(j.j, var_list(*indices)) )
+        write( "#{0}=GEOMETRIC_SET('',{1})".format(j.j, var_list(*shapes)) )
 
         # Footer
         write( "#{0}=PRESENTATION_LAYER_ASSIGNMENT('.BLACK_HOLE','',(#{1}));".format(j.j,j_axis) )
@@ -379,7 +485,7 @@ def pads2step(pads):
         write( "#{0}=UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.477113140796E-3),#{1},'distance_accuracy_value','Maximum model space distance between geometric entities at asserted connectivities');".format(j.j,j.j-5) )
         write( "#{0}=(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((#{1}))GLOBAL_UNIT_ASSIGNED_CONTEXT({2})REPRESENTATION_CONTEXT('ID1','3'));".format(j.j,j.j-1,var_list(j.j-6, j.j-3, j.j-2)) )
         write( "#{0}=GEOMETRICALLY_BOUNDED_SURFACE_SHAPE_REPRESENTATION('',(#{1}),#{2});".format(j.j,j_set,j.j-1) )
-        write( "#{0}=MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION('',{1},#{2});".format(j.j,var_list(*indices),j.j-2) )
+        write( "#{0}=MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION('',{1},#{2});".format(j.j,var_list(*shapes),j.j-2) )
 
         write("ENDSEC")
         write("END-ISO-10303-21")
@@ -387,7 +493,12 @@ def pads2step(pads):
 
 # main ------------------------------------------------------------------------
 
-fn = "examples/MOLEX_1051330011.d"
+if len(sys.argv) != 2 or '-h' in sys.argv:
+    print('pads2step.py: this tool converst .d decal files from PADS into .stp format.\n'
+        + 'Usage: pads2step.py <pads filename>')
+    sys.exit()
+
+fn = sys.argv[1]
 thing = None
 with open(fn) as infile:
     # Get data type, skip blank line
