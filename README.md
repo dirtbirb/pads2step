@@ -1,5 +1,11 @@
 # pads2step
-Converts PADS .d PCB decal files to STEP .stp format. Allows easy transfer from electrical to mechanical layouts.
+Converts PADS .d PCB decal files to STEP .stp format. Allows easy transfer of connector footprints from electrical to mechanical layouts.
+
+Usage: pads2step.py [options] <filename>.d
+
+Options:  
+-h:     Show usage directions  
+-x:     Exclude connector body drawings, only output drill holes and terminal pads  
 
 It's easy to find people complaining about the lack of communication between "electrical land" and "mechanical land" when it comes to device layout, but much harder to find tools meant to actually make that communication easier - especially tools that don't require massive, proprietary CAD packages to make it happen. Hopefully this helps!
 
