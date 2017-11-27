@@ -40,7 +40,8 @@ class Piece(object):
         header = spliterator(line)
         for i in range(len(header)):
             if i == 0: attr = header[i]
-            elif i == 1 or i > 2: attr = int(header[i])
+            elif i == 1 or i > 2:
+                attr = int(header[i])
             elif i == 2: attr = float(header[i])
             setattr(self, items[i], attr)
 
@@ -158,11 +159,14 @@ class PCBDecals(PadsItem):
 
         # Read piece definitions
         self.pieces = []
-        while line[0] != 'T':
+        while spliterator(line)[0] in ('OPEN', 'CLOSED', 'CIRCLE', 'COPOPN', 'COPCLS', 'COPCIR', 'BRDCUT', 'BRDCCO', 'KPTCLS', 'KPTCIT', 'TAG'):
             self.pieces.append( Piece(line, infile) )
             line = next(infile).rstrip()
 
-        # Read text definitions?
+        # Skip text definitions
+        self.text = []
+        while line[0] != 'T':
+            line = next(infile)
 
         # Read terminals
         self.terminals = []
@@ -425,12 +429,13 @@ def pads2step(pads):
 
         # Shapes
         shapes = []
-        for piece in pads.pieces:
-            t = piece.type
-            if t in ("OPEN", "CLOSED", "COPOPN", "COPCLS", "KPTCLS", "BRDCUT", "BRDCCO"):
-                shapes.append( write_shape(piece) )
-            elif t in ("CIRCLE", "COPCIR", "KPTCIR"):
-                shapes.append( write_circle(piece) )
+        if shape_flag:
+            for piece in pads.pieces:
+                t = piece.type
+                if t in ("OPEN", "CLOSED", "COPOPN", "COPCLS", "KPTCLS", "BRDCUT", "BRDCCO"):
+                    shapes.append( write_shape(piece) )
+                elif t in ("CIRCLE", "COPCIR", "KPTCIR"):
+                    shapes.append( write_circle(piece) )
 
         # Find default pad stack for terminals
         for pad in pads.pads:
@@ -443,49 +448,56 @@ def pads2step(pads):
         for i in range(1,len(pads.terminals)+1):
 
             # Find matching pad stack
-            for pad in pads.pads:
-                if pad.pin == i:
-                    pad_match = pad
+            for stack in pads.pads:
+                if stack.pin == i:
+                    stack_match = stack
                     break
-            else: pad_match = pad_0
+            else: stack_match = pad_0
 
             # Get top layer
-            for layer in pad_match.layers:
+            for layer in stack_match.layers:
                 if layer.n == -2:
-                    pad_match = layer
+                    layer_match = layer
                     break
             else: print("No top layer found for pin {0}!".format(i-1))
 
-            # Write appropriate shape
+            # Write drill hole
             x, y = pads.terminals[i-1][0][0], pads.terminals[i-1][0][1]
-            if pad_match.shape in ('R', 'RA', 'RT'):
-                shapes.append( write_pad_circle(x, y, pad_match.width) )
-            elif pad_match.shape in ('S', 'SA', 'ST'):
-                shapes.append( write_pad_square(x, y, pad_match.width) )
-            elif pad_match.shape == 'A':
-                shapes.append( write_pad_annular(x, y, pad_match.width, pad_match.intd) )
-            elif pad_match.shape == 'OF':
-                shapes.append( write_pad_oval(x, y, pad_match.width, pad_match.ori, pad_match.length, pad_match.offset) )
-            elif pad_match.shape == 'RF':
-                shapes.append( write_pad_rectangle(x, y, pad_match.width, pad_match.corner, pad_match.ori, pad_match.length, pad_match.offset) )
-            else: print("WARNING: Skipped unrecognized pad shape {0}".format(pad_match.shape))
+            if stack_match.drill > 0:
+                if hasattr(stack_match, 'drllen'):
+                    shapes.append( write_pad_oval(x, y, stack_match.drill, stack_match.drlori, stack_match.drllen, stack_match.drloff))
+                else:
+                    shapes.append( write_pad_circle(x, y, stack_match.drill) )
+
+            # Write appropriate shape
+            if layer_match.shape in ('R', 'RA', 'RT'):
+                shapes.append( write_pad_circle(x, y, layer_match.width) )
+            elif layer_match.shape in ('S', 'SA', 'ST'):
+                shapes.append( write_pad_square(x, y, layer_match.width) )
+            elif layer_match.shape == 'A':
+                shapes.append( write_pad_annular(x, y, layer_match.width, layer_match.intd) )
+            elif layer_match.shape == 'OF':
+                shapes.append( write_pad_oval(x, y, layer_match.width, layer_match.ori, layer_match.length, layer_match.offset) )
+            elif layer_match.shape == 'RF':
+                shapes.append( write_pad_rectangle(x, y, layer_match.width, layer_match.corner, layer_match.ori, layer_match.length, layer_match.offset) )
+            else: print("WARNING: Skipped unrecognized pad shape {0}".format(layer_match.shape))
 
         # Finish shapes
         j_set = j.j
         write( "#{0}=GEOMETRIC_SET('',{1})".format(j.j, var_list(*shapes)) )
 
         # Footer
-        write( "#{0}=PRESENTATION_LAYER_ASSIGNMENT('.BLACK_HOLE','',(#{1}));".format(j.j,j_axis) )
-        write( "#{0}=INVISIBILITY((#{1}));".format(j.j,j.j-1) )
-        write( "#{0}=(LENGTH_UNIT()NAMED_UNIT(*)SI_UNIT(.MILLI.,.METRE.));".format(j.j) )
-        write( "#{0}=(NAMED_UNIT(*)PLANE_ANGLE_UNIT()SI_UNIT($,.RADIAN.));".format(j.j) )
-        write( "#{0}=PLANE_ANGLE_MEASURE_WITH_UNIT(PLANE_ANGLE_MEASURE(1.745329251994E-2),#{1});".format(j.j,j.j-1) )
-        write( "#{0}=(CONVERSION_BASED_UNIT('DEGREE',#{1})NAMED_UNIT(*)PLANE_ANGLE_UNIT());".format(j.j,j.j-1) )
-        write( "#{0}=(NAMED_UNIT(*)SI_UNIT($,.STERADIAN.)SOLID_ANGLE_UNIT());".format(j.j,) )
-        write( "#{0}=UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.477113140796E-3),#{1},'distance_accuracy_value','Maximum model space distance between geometric entities at asserted connectivities');".format(j.j,j.j-5) )
-        write( "#{0}=(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((#{1}))GLOBAL_UNIT_ASSIGNED_CONTEXT({2})REPRESENTATION_CONTEXT('ID1','3'));".format(j.j,j.j-1,var_list(j.j-6, j.j-3, j.j-2)) )
-        write( "#{0}=GEOMETRICALLY_BOUNDED_SURFACE_SHAPE_REPRESENTATION('',(#{1}),#{2});".format(j.j,j_set,j.j-1) )
-        write( "#{0}=MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION('',{1},#{2});".format(j.j,var_list(*shapes),j.j-2) )
+        write( "#{0}=PRESENTATION_LAYER_ASSIGNMENT('.BLACK_HOLE','',(#{1}))".format(j.j,j_axis) )
+        write( "#{0}=INVISIBILITY((#{1}))".format(j.j,j.j-1) )
+        write( "#{0}=(LENGTH_UNIT()NAMED_UNIT(*)SI_UNIT(.MILLI.,.METRE.))".format(j.j) )
+        write( "#{0}=(NAMED_UNIT(*)PLANE_ANGLE_UNIT()SI_UNIT($,.RADIAN.))".format(j.j) )
+        write( "#{0}=PLANE_ANGLE_MEASURE_WITH_UNIT(PLANE_ANGLE_MEASURE(1.745329251994E-2),#{1})".format(j.j,j.j-1) )
+        write( "#{0}=(CONVERSION_BASED_UNIT('DEGREE',#{1})NAMED_UNIT(*)PLANE_ANGLE_UNIT())".format(j.j,j.j-1) )
+        write( "#{0}=(NAMED_UNIT(*)SI_UNIT($,.STERADIAN.)SOLID_ANGLE_UNIT())".format(j.j,) )
+        write( "#{0}=UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.477113140796E-3),#{1},'distance_accuracy_value','Maximum model space distance between geometric entities at asserted connectivities')".format(j.j,j.j-5) )
+        write( "#{0}=(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((#{1}))GLOBAL_UNIT_ASSIGNED_CONTEXT({2})REPRESENTATION_CONTEXT('ID1','3'))".format(j.j,j.j-1,var_list(j.j-6, j.j-3, j.j-2)) )
+        write( "#{0}=GEOMETRICALLY_BOUNDED_SURFACE_SHAPE_REPRESENTATION('',(#{1}),#{2})".format(j.j,j_set,j.j-1) )
+        write( "#{0}=MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION('',({1}),#{2})".format(j.j,var_list(*shapes),j.j-2) )
 
         write("ENDSEC")
         write("END-ISO-10303-21")
@@ -493,12 +505,18 @@ def pads2step(pads):
 
 # main ------------------------------------------------------------------------
 
-if len(sys.argv) != 2 or '-h' in sys.argv:
-    print('pads2step.py: this tool converst .d decal files from PADS into .stp format.\n'
-        + 'Usage: pads2step.py <pads filename>')
+if len(sys.argv) not in range(2, 4) or '-h' in sys.argv:
+    print('pads2step.py: this tool converts .d decal files from PADS into .stp format.\n'
+        + 'Usage: pads2step.py <pads filename> <flags>\n'
+        + 'Flags:\n'
+        + "-h: show this message, don't convert anything\n"
+        + '-x: exclude part detail, only show pin pads and drill holes')
     sys.exit()
 
 fn = sys.argv[1]
+if '-x' in sys.argv: shape_flag = False
+else: shape_flag = True
+
 thing = None
 with open(fn) as infile:
     # Get data type, skip blank line
