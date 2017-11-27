@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 from datetime import datetime   # Date and time representation
-import sys
-import math
+import sys                      # Handle command-line flags
+import math                     # Math
 
 def spliterator(line, sep=' ', filt=''):
     ''' Split a line, drop empty segments, return a filtered list of results '''
@@ -21,8 +21,8 @@ class AttributeLabel(object):
 
         vals = spliterator(line1)
         for i in range(len(vals)):
-            if i < 3 or i == 4 or i == 5: item = float(vals[i])
-            elif i == 3 or (i > 5 and i < 9): item = int(vals[i])
+            if i in (0, 1, 2, 4, 5): item = float(vals[i])
+            elif i in (3, 6, 7, 8): item = int(vals[i])
             elif i == 9:
                 item = ''
                 for j in range(i, len(vals)):
@@ -40,9 +40,10 @@ class Piece(object):
         header = spliterator(line)
         for i in range(len(header)):
             if i == 0: attr = header[i]
-            elif i == 1 or i > 2:
-                attr = int(header[i])
             elif i == 2: attr = float(header[i])
+            else: # i == 1 or i > 2:
+                attr = int(header[i])
+
             setattr(self, items[i], attr)
 
         # Read piece body
@@ -134,8 +135,8 @@ class PCBDecals(PadsItem):
         header_attrs = ( 'name', 'units', 'x', 'y', 'n_attrs', 'n_labels',
             'n_pieces', 'n_text', 'n_terminals', 'n_stacks', 'maxlayers' )
         for i in range(len(header)):
-            if i == 0 or i == 1: attr = header[i]
-            if i == 2 or i == 3: attr = float(header[i])
+            if i in (0, 1): attr = header[i]
+            if i in (2, 3): attr = float(header[i])
             if i > 3: attr = int(header[i])
             setattr(self, header_attrs[i], attr)
 
@@ -193,7 +194,7 @@ def pads2step(pads):
 
     with open(pads.name + '.stp', 'w') as stp:
 
-        class j(): j=1  # Hack, necessary to keep j in this scope
+        class j(): j=1  # Hack, necessary to keep j in this scope, not global
 
         def write(line):
             ''' Take a line, add ";\n", write it out, increment j '''
@@ -209,20 +210,18 @@ def pads2step(pads):
             return ','.join(map(var, items))
 
         def vect(a, b):
+            ''' Return 1 for positive distance, -1 for negative, 0 for 0 '''
             dist = b-a
-            if dist > 0:
-                return '1'
-            elif dist == 0:
-                return '0'
-            else:
-                return '-1'
+            if dist > 0: return '1'
+            elif dist == 0: return '0'
+            else: return '-1'
 
         def write_shape_end(w):
-            write( var(j.j) + "=PRESENTATION_STYLE_ASSIGNMENT((#{0}))".format(j.j-1) )
-            write( var(j.j) + "=STYLED_ITEM('',(#{0}),#{1})".format(j.j-1, j.j-3) )
+            write( "#{0}=CURVE_STYLE('',#{1},POSITIVE_LENGTH_MEASURE({2}),#5)".format(j.j, j_font, w) )
+            write( "#{0}=PRESENTATION_STYLE_ASSIGNMENT((#{1}))".format(j.j, j.j-1) )
+            write( "#{0}=STYLED_ITEM('',(#{1}),#{2})".format(j.j, j.j-1, j.j-3) )
             ret = j.j
-            write( var(j.j) + "=COMPOSITE_CURVE_SEGMENT(.CONTINUOUS.,.T.,#{0})".format(j.j-4) )
-            write( var(j.j) + "=CURVE_STYLE('',#{0},POSITIVE_LENGTH_MEASURE({1}),#5)".format(j_font, w) )
+            write( "#{0}=COMPOSITE_CURVE_SEGMENT(.CONTINUOUS.,.T.,#{1})".format(j.j, j.j-4) )
             return ret
 
         def write_line(x0, y0, w, seg):
@@ -251,9 +250,8 @@ def pads2step(pads):
             return write_shape_end(w)
 
         def write_comp(*items):
-            ret = j.j
-            write( var(j.j) + "=COMPOSITE_CURVE(''," + var_list(*items) + ",.F.)")
-            return ret
+            write( "#{0}=COMPOSITE_CURVE('',({1}),.F.)".format(j.j, var_list(*items)) )
+            return j.j-1
 
         def write_shape(shape):
             w = float(shape.width)
@@ -298,7 +296,7 @@ def pads2step(pads):
 
         def write_pad_rectangle(x, y, r, corner, ori, l, offset):
             # TODO: support rounded/chamfered corners
-            # TODO: offset??
+            # TODO: support offset
 
             w = w_default
             r = r/2
@@ -320,7 +318,7 @@ def pads2step(pads):
             return write_pad_rectangle(x, y, r, 0, 0, r, 0)
 
         def write_pad_oval(x, y, r, ori, l, offset):
-            # TODO: offset???
+            # TODO: support offset
 
             w = w_default
             r = r/2
@@ -384,7 +382,7 @@ def pads2step(pads):
             + organization + "'),'"
             + preprocessor_version + "','"
             + originating_system + "','"
-            + authorization + "'")
+            + authorization + "')")
 
         # FILE_SCHEMA
         schema = "'AUTOMOTIVE_DESIGN \{ 1 0 10303 214 1 1 1 1 \}'"
@@ -413,19 +411,19 @@ def pads2step(pads):
             ('',8.8E-1,1.6E-1,1.6E-1),
             ('',8.784E-1,9.49E-1,1.E0) )
         for color in colors:
-            write(var(j.j) + "=COLOUR_RGB" + str(color))
+            write("#{0}=COLOUR_RGB{1}".format(j.j, str(color)) )
 
         # Origin
-        write( var(j.j) + "=CARTESIAN_POINT('',(0.E0,0.E0,0.E0))" )
-        write( var(j.j) + "=DIRECTION('',(0.E0,0.E0,1.E0))" )
-        write( var(j.j) + "=DIRECTION('',(1.E0,0.E0,0.E0))" )
-        j_axis = j.j
-        write( var(j.j) + "=AXIS2_PLACEMENT_3D(" + var_list('DEFAULT_CSYS',j.j-3,j.j-2,j.j-1) )
-        j_font = j.j   # This is referenced frequently
-        write( var(j.j) + "=DRAUGHTING_PRE_DEFINED_CURVE_FONT('continuous')" )
-        write( var(j.j) + "=CURVE_STYLE(''," + var(j.j-1) + ",POSITIVE_LENGTH_MEASURE(2.E-2),#8)" )
-        write( var(j.j) + "=PRESENTATION_STYLE_ASSIGNMENT((" + var(j.j-1) + "))" )
-        write( var(j.j) + "=STYLED_ITEM(''," + var_list(j.j-1) + "," + var(j_font) + ")" )
+        write( "#{0}=CARTESIAN_POINT('',(0.E0,0.E0,0.E0))".format(j.j) )
+        write( "#{0}=DIRECTION('',(0.E0,0.E0,1.E0))".format(j.j) )
+        write( "#{0}=DIRECTION('',(1.E0,0.E0,0.E0))".format(j.j) )
+        j_axis = j.j    # Save this for later
+        write( "#{0}=AXIS2_PLACEMENT_3D('DEFAULT_CSYS',{1})".format(j.j, var_list(j.j-3,j.j-2,j.j-1)) )
+        j_font = j.j    # Save this for later
+        write( "#{0}=DRAUGHTING_PRE_DEFINED_CURVE_FONT('continuous')".format(j.j) )
+        write( "#{0}=CURVE_STYLE('',#{1},POSITIVE_LENGTH_MEASURE(2.E-2),#8)".format(j.j, j.j-1) )
+        write( "#{0}=PRESENTATION_STYLE_ASSIGNMENT(({1}))".format(j.j, var_list(j.j-1)) )
+        write( "#{0}=STYLED_ITEM('',({1}),#{2})".format(j.j, var_list(j.j-1), j_axis) )
 
         # Shapes
         shapes = []
@@ -484,7 +482,7 @@ def pads2step(pads):
 
         # Finish shapes
         j_set = j.j
-        write( "#{0}=GEOMETRIC_SET('',{1})".format(j.j, var_list(*shapes)) )
+        write( "#{0}=GEOMETRIC_SET('',({1}))".format(j.j, var_list(*shapes)) )
 
         # Footer
         write( "#{0}=PRESENTATION_LAYER_ASSIGNMENT('.BLACK_HOLE','',(#{1}))".format(j.j,j_axis) )
@@ -493,7 +491,7 @@ def pads2step(pads):
         write( "#{0}=(NAMED_UNIT(*)PLANE_ANGLE_UNIT()SI_UNIT($,.RADIAN.))".format(j.j) )
         write( "#{0}=PLANE_ANGLE_MEASURE_WITH_UNIT(PLANE_ANGLE_MEASURE(1.745329251994E-2),#{1})".format(j.j,j.j-1) )
         write( "#{0}=(CONVERSION_BASED_UNIT('DEGREE',#{1})NAMED_UNIT(*)PLANE_ANGLE_UNIT())".format(j.j,j.j-1) )
-        write( "#{0}=(NAMED_UNIT(*)SI_UNIT($,.STERADIAN.)SOLID_ANGLE_UNIT())".format(j.j,) )
+        write( "#{0}=(NAMED_UNIT(*)SI_UNIT($,.STERADIAN.)SOLID_ANGLE_UNIT())".format(j.j) )
         write( "#{0}=UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.477113140796E-3),#{1},'distance_accuracy_value','Maximum model space distance between geometric entities at asserted connectivities')".format(j.j,j.j-5) )
         write( "#{0}=(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((#{1}))GLOBAL_UNIT_ASSIGNED_CONTEXT({2})REPRESENTATION_CONTEXT('ID1','3'))".format(j.j,j.j-1,var_list(j.j-6, j.j-3, j.j-2)) )
         write( "#{0}=GEOMETRICALLY_BOUNDED_SURFACE_SHAPE_REPRESENTATION('',(#{1}),#{2})".format(j.j,j_set,j.j-1) )
