@@ -4,25 +4,32 @@ from datetime import datetime   # Date and time representation
 import sys                      # Handle command-line flags
 import math                     # Math
 
+
+W_DEFAULT = 0.02
+
+
 def spliterator(line, sep=' ', filt=''):
-    ''' Split a line, drop empty segments, return a filtered list of results '''
+    ''' Split a line, drop empty segments, return filtered list of results '''
 
     def filterator(string):
         return string != filt
 
-    return filter( filterator, line.rstrip().split(sep) )
+    return filter(filterator, line.rstrip().split(sep))
+
 
 # PADS entities ---------------------------------------------------------------
 
 class AttributeLabel(object):
     def __init__(self, line1, line2):
-        items = ( 'x', 'y', 'rotation', 'mirror', 'height', 'width', 'layer',
-            'just', 'flags', 'font_info' )
+        items = ('x', 'y', 'rotation', 'mirror', 'height', 'width', 'layer',
+                 'just', 'flags', 'font_info')
 
         vals = spliterator(line1)
         for i in range(len(vals)):
-            if i in (0, 1, 2, 4, 5): item = float(vals[i])
-            elif i in (3, 6, 7, 8): item = int(vals[i])
+            if i in (0, 1, 2, 4, 5):
+                item = float(vals[i])
+            elif i in (3, 6, 7, 8):
+                item = int(vals[i])
             elif i == 9:
                 item = ''
                 for j in range(i, len(vals)):
@@ -33,27 +40,29 @@ class AttributeLabel(object):
 
         self.name = line2
 
+
 class Piece(object):
     def __init__(self, line, infile):
         # Read piece header
-        items = ( 'type', 'numcoord', 'width', 'layer', 'linestyle' )
+        items = ('type', 'numcoord', 'width', 'layer', 'linestyle')
         header = spliterator(line)
         for i in range(len(header)):
-            if i == 0: attr = header[i]
-            elif i == 2: attr = float(header[i])
-            else: # i == 1 or i > 2:
+            if i == 0:
+                attr = header[i]
+            elif i == 2:
+                attr = float(header[i])
+            else:   # i == 1 or i > 2:
                 attr = int(header[i])
-
             setattr(self, items[i], attr)
 
         # Read piece body
         self.segments = []
         for i in range(self.numcoord):
             segments = spliterator(next(infile).rstrip())
-            l = len(segments)
-            if l == 2:
+            n = len(segments)
+            if n == 2:
                 self.shape = "line"
-            elif l == 8:
+            elif n == 8:
                 self.shape = "arc"
             else:
                 print("ERROR: Wrong number of piece coordinates: " + l)
@@ -61,14 +70,16 @@ class Piece(object):
 
             seg_iter = iter(segments)
             for seg in seg_iter:
-                self.segments.append( (float(seg), float(next(seg_iter))) )
+                self.segments.append((float(seg), float(next(seg_iter))))
+
 
 class Terminal(list):
     def __init__(self, line):
         items = iter(spliterator(line))
-        self.append( (float(next(items).replace('T', '')), float(next(items)) ) )
-        self.append( (float(next(items)), float(next(items)) ) )
+        self.append((float(next(items).replace('T', '')), float(next(items))))
+        self.append((float(next(items)), float(next(items))))
         self.pin = next(items)
+
 
 class PadStack(object):
     def __init__(self, line, infile):
@@ -98,19 +109,23 @@ class PadStack(object):
                     self.n_spk = int(next(items))
 
         # Read header line
-        items = ('pin', 'n_layers', 'plated', 'drill', 'drlori', 'drllen', 'drloff')
+        items = ('pin', 'n_layers', 'plated', 'drill', 'drlori', 'drllen',
+                 'drloff')
         header = spliterator(line)[1:]
         self.slotted = len(header) > 4
         for i in range(len(header)):
-            if i < 2: attr = int(header[i])
-            elif i == 2: attr = header[i]
-            elif i > 2: attr = float(header[i])
+            if i < 2:
+                attr = int(header[i])
+            elif i == 2:
+                attr = header[i]
+            elif i > 2:
+                attr = float(header[i])
             setattr(self, items[i], attr)
 
         # Read layers
         self.layers = []
         for i in range(self.n_layers):
-            self.layers.append( Layer(next(infile)) )
+            self.layers.append(Layer(next(infile)))
 
 
 # PADS file types -------------------------------------------------------------
@@ -119,11 +134,14 @@ class PadsItem(object):
     def __init__(self, infile):
         print("This file type is not supported")
 
+
 class DraftingItem(PadsItem):
     pass
 
+
 class SchematicDecals(PadsItem):
     pass
+
 
 class PCBDecals(PadsItem):
 
@@ -132,17 +150,21 @@ class PCBDecals(PadsItem):
         header = spliterator(next(infile).rstrip())
 
         # Save header data
-        header_attrs = ( 'name', 'units', 'x', 'y', 'n_attrs', 'n_labels',
-            'n_pieces', 'n_text', 'n_terminals', 'n_stacks', 'maxlayers' )
+        header_attrs = ('name', 'units', 'x', 'y', 'n_attrs', 'n_labels',
+                        'n_pieces', 'n_text', 'n_terminals', 'n_stacks',
+                        'maxlayers')
         for i in range(len(header)):
-            if i in (0, 1): attr = header[i]
-            if i in (2, 3): attr = float(header[i])
-            if i > 3: attr = int(header[i])
+            if i in (0, 1):
+                attr = header[i]
+            if i in (2, 3):
+                attr = float(header[i])
+            if i > 3:
+                attr = int(header[i])
             setattr(self, header_attrs[i], attr)
 
         # Read timestamp
         timestamp = next(infile).rstrip().split(' ')[1].split('.')
-        self.timestamp = datetime( *list(map(int, timestamp)) )
+        self.timestamp = datetime(*list(map(int, timestamp)))
 
         # Read attributes
         self.attributes = {}
@@ -155,13 +177,16 @@ class PCBDecals(PadsItem):
         # Read attribute labels
         self.attribute_labels = []
         while line[-1] == '\"':
-            self.attribute_labels.append( AttributeLabel(line, next(infile).rstrip()) )
+            self.attribute_labels.append(
+                AttributeLabel(line, next(infile).rstrip()))
             line = next(infile).rstrip()
 
         # Read piece definitions
         self.pieces = []
-        while spliterator(line)[0] in ('OPEN', 'CLOSED', 'CIRCLE', 'COPOPN', 'COPCLS', 'COPCIR', 'BRDCUT', 'BRDCCO', 'KPTCLS', 'KPTCIT', 'TAG'):
-            self.pieces.append( Piece(line, infile) )
+        while spliterator(line)[0] in ('OPEN', 'CLOSED', 'CIRCLE', 'COPOPN',
+                                       'COPCLS', 'COPCIR', 'BRDCUT', 'BRDCCO',
+                                       'KPTCLS', 'KPTCIT', 'TAG'):
+            self.pieces.append(Piece(line, infile))
             line = next(infile).rstrip()
 
         # Skip text definitions
@@ -172,14 +197,15 @@ class PCBDecals(PadsItem):
         # Read terminals
         self.terminals = []
         while line[0] == 'T':
-            self.terminals.append( Terminal(line) )
+            self.terminals.append(Terminal(line))
             line = next(infile).rstrip()
 
         # Read pad stacks
         self.pads = []
         while line[0:3] == 'PAD':
-            self.pads.append( PadStack(line, infile) )
+            self.pads.append(PadStack(line, infile))
             line = next(infile).rstrip()
+
 
 class PartTypes(PadsItem):
     pass
@@ -194,7 +220,9 @@ def pads2step(pads):
 
     with open(pads.name + '.stp', 'w') as stp:
 
-        class j(): j=1  # Hack, necessary to keep j in this scope, not global
+        # HACK: necessary to keep j in this scope, not global
+        class j():
+            j = 1
 
         def write(line):
             ''' Take a line, add ";\n", write it out, increment j '''
@@ -212,28 +240,33 @@ def pads2step(pads):
         def vect(a, b):
             ''' Return 1 for positive distance, -1 for negative, 0 for 0 '''
             dist = b-a
-            if dist > 0: return '1'
-            elif dist == 0: return '0'
-            else: return '-1'
+            if dist > 0:
+                ret = '1'
+            elif dist == 0:
+                ret = '0'
+            else:
+                ret = '-1'
+            return ret
 
         def write_shape_end(w):
-            write( "#{0}=CURVE_STYLE('',#{1},POSITIVE_LENGTH_MEASURE({2}),#5)".format(j.j, j_font, w) )
-            write( "#{0}=PRESENTATION_STYLE_ASSIGNMENT((#{1}))".format(j.j, j.j-1) )
-            write( "#{0}=STYLED_ITEM('',(#{1}),#{2})".format(j.j, j.j-1, j.j-3) )
+            write("#{0}=CURVE_STYLE('',#{1},POSITIVE_LENGTH_MEASURE({2}),#5)".format(j.j, j_font, w))
+            write("#{0}=PRESENTATION_STYLE_ASSIGNMENT((#{1}))".format(j.j, j.j-1))
+            write("#{0}=STYLED_ITEM('',(#{1}),#{2})".format(j.j, j.j-1, j.j-3))
             ret = j.j
-            write( "#{0}=COMPOSITE_CURVE_SEGMENT(.CONTINUOUS.,.T.,#{1})".format(j.j, j.j-4) )
+            write("#{0}=COMPOSITE_CURVE_SEGMENT(.CONTINUOUS.,.T.,#{1})".format(j.j, j.j-4))
             return ret
 
         def write_line(x0, y0, w, seg):
             x, y, = seg
             d = math.sqrt((x-x0)**2 + (y-y0)**2)
 
-            if x0 != x and y0 != y: print(y0, y)
-            write( "#{0}=DIRECTION('',({1},{2},0.E0))".format(j.j, vect(x0,x), vect(y0,y)))
-            write( "#{0}=VECTOR('',#{1},{2})".format(j.j, j.j-1, d) )
-            write( "#{0}=CARTESIAN_POINT('',({1},{2},0.E0))".format(j.j, x0,y0) )
-            write( "#{0}=LINE('',#{1},#{2})".format(j.j, j.j-1,j.j-2) )
-            write( "#{0}=TRIMMED_CURVE('',#{1},(PARAMETER_VALUE(0.E0)),(PARAMETER_VALUE(1.E0)),.T.,.UNSPECIFIED.)".format(j.j, j.j-1) )
+            if x0 != x and y0 != y:
+                print(y0, y)
+            write("#{0}=DIRECTION('',({1},{2},0.E0))".format(j.j, vect(x0, x), vect(y0, y)))
+            write("#{0}=VECTOR('',#{1},{2})".format(j.j, j.j-1, d))
+            write("#{0}=CARTESIAN_POINT('',({1},{2},0.E0))".format(j.j, x0, y0))
+            write("#{0}=LINE('',#{1},#{2})".format(j.j, j.j-1, j.j-2))
+            write("#{0}=TRIMMED_CURVE('',#{1},(PARAMETER_VALUE(0.E0)),(PARAMETER_VALUE(1.E0)),.T.,.UNSPECIFIED.)".format(j.j, j.j-1))
             return write_shape_end(w)
 
         def write_arc(x0, y0, w, seg):
@@ -241,16 +274,16 @@ def pads2step(pads):
             r = (ax2-ax1)/2
             xc, yc = (ax2 + ax1)/2, (ay2 + ay1)/2
 
-            write( "#{0}=CARTESIAN_POINT('',({1},{2},0.E0))".format(j.j, xc, yc) )
-            write( "#{0}=DIRECTION('',(0.E0,0.E0,1.E0))".format(j.j) )
-            write( "#{0}=DIRECTION('',({1},{2},0.E0))".format(j.j, vect(x0,x), vect(y0,y)) )
-            write( "#{0}=AXIS2_PLACEMENT_3D('',{1})".format(j.j, var_list(j.j-3,j.j-2,j.j-1)) )
-            write( "#{0}=CIRCLE('',#{1},{2})".format(j.j, j.j-1, r) )
-            write( "#{0}=TRIMMED_CURVE('',#{1},(PARAMETER_VALUE({2})),(PARAMETER_VALUE({3})),.T.,.UNSPECIFIED.)".format(j.j, j.j-1, ab, aa) )
+            write("#{0}=CARTESIAN_POINT('',({1},{2},0.E0))".format(j.j, xc, yc))
+            write("#{0}=DIRECTION('',(0.E0,0.E0,1.E0))".format(j.j))
+            write("#{0}=DIRECTION('',({1},{2},0.E0))".format(j.j, vect(x0, x), vect(y0, y)))
+            write("#{0}=AXIS2_PLACEMENT_3D('',{1})".format(j.j, var_list(j.j-3, j.j-2, j.j-1)))
+            write("#{0}=CIRCLE('',#{1},{2})".format(j.j, j.j-1, r))
+            write("#{0}=TRIMMED_CURVE('',#{1},(PARAMETER_VALUE({2})),(PARAMETER_VALUE({3})),.T.,.UNSPECIFIED.)".format(j.j, j.j-1, ab, aa))
             return write_shape_end(w)
 
         def write_comp(*items):
-            write( "#{0}=COMPOSITE_CURVE('',({1}),.F.)".format(j.j, var_list(*items)) )
+            write("#{0}=COMPOSITE_CURVE('',({1}),.F.)".format(j.j, var_list(*items)))
             return j.j-1
 
         def write_shape(shape):
@@ -258,11 +291,11 @@ def pads2step(pads):
             x0, y0, = shape.segments[0]
             segs = []
             for seg in shape.segments[1:]:
-                l = len(seg)
-                if l == 2:      # Line
-                    segs.append( write_line(x0, y0, w, seg) )
-                elif l == 8:    # Arc
-                    segs.append( write_arc(x0, y0, w, seg) )
+                n = len(seg)
+                if n == 2:      # Line
+                    segs.append(write_line(x0, y0, w, seg))
+                elif n == 8:    # Arc
+                    segs.append(write_arc(x0, y0, w, seg))
                 else:           # ?
                     print("ERROR: writing segment that isn't line or arc")
                     break
@@ -282,9 +315,8 @@ def pads2step(pads):
             b = write_arc(x1, y1, w, [x0, y0, 180, 180, ax1, ay1, ax2, ay2])
             return write_comp(a, b)
 
-        w_default = 0.02
         def write_pad_circle(x, y, r):
-            w = w_default
+            w = W_DEFAULT
             x0, y0 = x-r, y
             x1, y1 = x+r, y
             ax1, ay1 = x-r, y-r
@@ -298,7 +330,7 @@ def pads2step(pads):
             # TODO: support rounded/chamfered corners
             # TODO: support offset
 
-            w = w_default
+            w = W_DEFAULT
             r = r/2
             l = l/2
 
@@ -308,10 +340,10 @@ def pads2step(pads):
             x_l, x_r = x-x_f, x+x_f
             y_t, y_b = y+y_f, y-y_f
 
-            a = write_line(x_l, y_t, w, (x_r, y_t)) # Top
-            b = write_line(x_r, y_t, w, (x_r, y_b)) # Right
-            c = write_line(x_r, y_b, w, (x_l, y_b)) # Bottom
-            d = write_line(x_l, y_b, w, (x_l, y_t)) # Left
+            a = write_line(x_l, y_t, w, (x_r, y_t))     # Top
+            b = write_line(x_r, y_t, w, (x_r, y_b))     # Right
+            c = write_line(x_r, y_b, w, (x_l, y_b))     # Bottom
+            d = write_line(x_l, y_b, w, (x_l, y_t))     # Left
             return write_comp(a, b, c, d)
 
         def write_pad_square(x, y, r):
@@ -320,7 +352,7 @@ def pads2step(pads):
         def write_pad_oval(x, y, r, ori, l, offset):
             # TODO: support offset
 
-            w = w_default
+            w = W_DEFAULT
             r = r/2
             l = l/2 - r
             sin, cos = math.sin(math.radians(ori)), math.cos(math.radians(ori))
@@ -335,10 +367,11 @@ def pads2step(pads):
             ax1_2, ay1_2 = x_l-r, y_b
             ax2_2, ay2_2 = x_l+r, y_t
 
-            a = write_line(x_l, y_t, w, (x_r, y_t)) # Top
-            b = write_arc(x_r, y_t, w, [x_r, y_b, 0, 180, ax1_1, ay1_1, ax2_1, ay2_1]) # Right
-            c = write_line(x_r, y_b, w, (x_l, y_b)) # Bottom
-            d = write_arc(x_l, y_b, w, [x_l, y_t, 0, 180, ax1_2, ay1_2, ax2_2, ay2_2]) # Left
+            # top, right, bottom, left
+            a = write_line(x_l, y_t, w, (x_r, y_t))
+            b = write_arc(x_r, y_t, w, [x_r, y_b, 0, 180, ax1_1, ay1_1, ax2_1, ay2_1])
+            c = write_line(x_r, y_b, w, (x_l, y_b))
+            d = write_arc(x_l, y_b, w, [x_l, y_t, 0, 180, ax1_2, ay1_2, ax2_2, ay2_2])
             return write_comp(a, b, c, d)
 
         def write_pad_annular(x, y, r_out, r_in):
@@ -353,12 +386,10 @@ def pads2step(pads):
         write("HEADER")
 
         # FILE_DESCRIPTION
-        description = 'Converted drawing from pads file' # Informal description
-        conformance = '2;1' # Conformance level to ISO-10303-21
+        description = 'Converted drawing from pads file'
+        conformance = '2;1'     # Conformance level to ISO-10303-21
 
-        write("FILE_DESCRIPTION(('"
-            + description + "'),'"
-            + conformance + "')")
+        write("FILE_DESCRIPTION(('{}'),'{}')".format(description, conformance))
 
         # FILE_NAME
         name = pads.name
@@ -367,7 +398,7 @@ def pads2step(pads):
             str(pads.timestamp.month),
             str(pads.timestamp.day) + 'T' + str(pads.timestamp.hour),
             ':' + str(pads.timestamp.minute),
-            ':' + str(pads.timestamp.second) ]
+            ':' + str(pads.timestamp.second)]
         timestamp = '-'.join(timestamp)
         author = 'PADS2STEP'
         organization = 'Distant Focus Corporation'
@@ -375,18 +406,13 @@ def pads2step(pads):
         originating_system = ''
         authorization = ''
 
-        write("FILE_NAME('"
-            + name + "','"
-            + timestamp + "',('"
-            + author + "'),('"
-            + organization + "'),'"
-            + preprocessor_version + "','"
-            + originating_system + "','"
-            + authorization + "')")
+        write("FILE_NAME('{}','{}',('{}'),('{}'),'{}','{}','{}')".format(
+            name, timestamp, author, organization, preprocessor_version,
+            originating_system, authorization))
 
         # FILE_SCHEMA
-        schema = "'AUTOMOTIVE_DESIGN \{ 1 0 10303 214 1 1 1 1 \}'"
-        write( "FILE_SCHEMA(('" + schema + "'))" )
+        schema = "'AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'"
+        write("FILE_SCHEMA(('" + schema + "'))")
 
         # End header
         write("ENDSEC")
@@ -397,105 +423,110 @@ def pads2step(pads):
 
         # Colors
         colors = (  # name, R, G, B
-            ('',0.E0,0.E0,6.6E-1),
-            ('',0.E0,6.6E-1,0.E0),
-            ('',3.4E-1,3.3E-1,3.5E-1),
-            ('',3.9E-1,5.6E-1,8.1E-1),
-            ('',4.E-1,4.509803921569E-1,1.E0),
-            ('',4.4E-1,5.E-1,5.5E-1),
-            ('',5.09804E-1,5.09804E-1,5.09804E-1),
-            ('',6.E-1,4.E-1,2.E-1),
-            ('',6.952E-1,7.426E-1,7.9E-1),
-            ('',8.03922E-1,5.88235E-1,1.96078E-1),
-            ('',8.4E-1,3.3E-1,3.5E-1),
-            ('',8.8E-1,1.6E-1,1.6E-1),
-            ('',8.784E-1,9.49E-1,1.E0) )
+            ('', 0.E0, 0.E0, 6.6E-1),
+            ('', 0.E0, 6.6E-1, 0.E0),
+            ('', 3.4E-1, 3.3E-1, 3.5E-1),
+            ('', 3.9E-1, 5.6E-1, 8.1E-1),
+            ('', 4.E-1, 4.509803921569E-1, 1.E0),
+            ('', 4.4E-1, 5.E-1, 5.5E-1),
+            ('', 5.09804E-1, 5.09804E-1, 5.09804E-1),
+            ('', 6.E-1, 4.E-1, 2.E-1),
+            ('', 6.952E-1, 7.426E-1, 7.9E-1),
+            ('', 8.03922E-1, 5.88235E-1, 1.96078E-1),
+            ('', 8.4E-1, 3.3E-1, 3.5E-1),
+            ('', 8.8E-1, 1.6E-1, 1.6E-1),
+            ('', 8.784E-1, 9.49E-1, 1.E0))
         for color in colors:
-            write("#{0}=COLOUR_RGB{1}".format(j.j, str(color)) )
+            write("#{0}=COLOUR_RGB{1}".format(j.j, str(color)))
 
         # Origin
-        write( "#{0}=CARTESIAN_POINT('',(0.E0,0.E0,0.E0))".format(j.j) )
-        write( "#{0}=DIRECTION('',(0.E0,0.E0,1.E0))".format(j.j) )
-        write( "#{0}=DIRECTION('',(1.E0,0.E0,0.E0))".format(j.j) )
+        write("#{0}=CARTESIAN_POINT('',(0.E0,0.E0,0.E0))".format(j.j))
+        write("#{0}=DIRECTION('',(0.E0,0.E0,1.E0))".format(j.j))
+        write("#{0}=DIRECTION('',(1.E0,0.E0,0.E0))".format(j.j))
         j_axis = j.j    # Save this for later
-        write( "#{0}=AXIS2_PLACEMENT_3D('DEFAULT_CSYS',{1})".format(j.j, var_list(j.j-3,j.j-2,j.j-1)) )
+        write("#{0}=AXIS2_PLACEMENT_3D('DEFAULT_CSYS',{1})".format(j.j, var_list(j.j-3, j.j-2, j.j-1)))
         j_font = j.j    # Save this for later
-        write( "#{0}=DRAUGHTING_PRE_DEFINED_CURVE_FONT('continuous')".format(j.j) )
-        write( "#{0}=CURVE_STYLE('',#{1},POSITIVE_LENGTH_MEASURE(2.E-2),#8)".format(j.j, j.j-1) )
-        write( "#{0}=PRESENTATION_STYLE_ASSIGNMENT(({1}))".format(j.j, var_list(j.j-1)) )
-        write( "#{0}=STYLED_ITEM('',({1}),#{2})".format(j.j, var_list(j.j-1), j_axis) )
+        write("#{0}=DRAUGHTING_PRE_DEFINED_CURVE_FONT('continuous')".format(j.j))
+        write("#{0}=CURVE_STYLE('',#{1},POSITIVE_LENGTH_MEASURE(2.E-2),#8)".format(j.j, j.j-1))
+        write("#{0}=PRESENTATION_STYLE_ASSIGNMENT(({1}))".format(j.j, var_list(j.j-1)))
+        write("#{0}=STYLED_ITEM('',({1}),#{2})".format(j.j, var_list(j.j-1), j_axis))
 
         # Shapes
         shapes = []
         if shape_flag:
             for piece in pads.pieces:
                 t = piece.type
-                if t in ("OPEN", "CLOSED", "COPOPN", "COPCLS", "KPTCLS", "BRDCUT", "BRDCCO"):
-                    shapes.append( write_shape(piece) )
+                if t in ("OPEN", "CLOSED", "COPOPN", "COPCLS", "KPTCLS",
+                         "BRDCUT", "BRDCCO"):
+                    shapes.append(write_shape(piece))
                 elif t in ("CIRCLE", "COPCIR", "KPTCIR"):
-                    shapes.append( write_circle(piece) )
+                    shapes.append(write_circle(piece))
 
         # Find default pad stack for terminals
         for pad in pads.pads:
             if pad.pin == 0:
                 pad_0 = pad
                 break
-        else: print("No pad 0 found!")
+        else:
+            print("No pad 0 found!")
 
         # Terminals
-        for i in range(1,len(pads.terminals)+1):
+        for i in range(1, len(pads.terminals)+1):
 
             # Find matching pad stack
             for stack in pads.pads:
                 if stack.pin == i:
                     stack_match = stack
                     break
-            else: stack_match = pad_0
+            else:
+                stack_match = pad_0
 
             # Get top layer
             for layer in stack_match.layers:
                 if layer.n == -2:
                     layer_match = layer
                     break
-            else: print("No top layer found for pin {0}!".format(i-1))
+            else:
+                print("No top layer found for pin {}!".format(i-1))
 
             # Write drill hole
             x, y = pads.terminals[i-1][0][0], pads.terminals[i-1][0][1]
             if stack_match.drill > 0:
                 if hasattr(stack_match, 'drllen'):
-                    shapes.append( write_pad_oval(x, y, stack_match.drill, stack_match.drlori, stack_match.drllen, stack_match.drloff))
+                    shapes.append(write_pad_oval(x, y, stack_match.drill, stack_match.drlori, stack_match.drllen, stack_match.drloff))
                 else:
-                    shapes.append( write_pad_circle(x, y, stack_match.drill) )
+                    shapes.append(write_pad_circle(x, y, stack_match.drill))
 
             # Write appropriate shape
             if layer_match.shape in ('R', 'RA', 'RT'):
-                shapes.append( write_pad_circle(x, y, layer_match.width) )
+                shapes.append(write_pad_circle(x, y, layer_match.width))
             elif layer_match.shape in ('S', 'SA', 'ST'):
-                shapes.append( write_pad_square(x, y, layer_match.width) )
+                shapes.append(write_pad_square(x, y, layer_match.width))
             elif layer_match.shape == 'A':
-                shapes.append( write_pad_annular(x, y, layer_match.width, layer_match.intd) )
+                shapes.append(write_pad_annular(x, y, layer_match.width, layer_match.intd))
             elif layer_match.shape == 'OF':
-                shapes.append( write_pad_oval(x, y, layer_match.width, layer_match.ori, layer_match.length, layer_match.offset) )
+                shapes.append(write_pad_oval(x, y, layer_match.width, layer_match.ori, layer_match.length, layer_match.offset))
             elif layer_match.shape == 'RF':
-                shapes.append( write_pad_rectangle(x, y, layer_match.width, layer_match.corner, layer_match.ori, layer_match.length, layer_match.offset) )
-            else: print("WARNING: Skipped unrecognized pad shape {0}".format(layer_match.shape))
+                shapes.append(write_pad_rectangle(x, y, layer_match.width, layer_match.corner, layer_match.ori, layer_match.length, layer_match.offset))
+            else:
+                print("WARNING: Skipped unrecognized pad shape {}".format(layer_match.shape))
 
         # Finish shapes
         j_set = j.j
-        write( "#{0}=GEOMETRIC_SET('',({1}))".format(j.j, var_list(*shapes)) )
+        write("#{0}=GEOMETRIC_SET('',({1}))".format(j.j, var_list(*shapes)))
 
         # Footer
-        write( "#{0}=PRESENTATION_LAYER_ASSIGNMENT('.BLACK_HOLE','',(#{1}))".format(j.j,j_axis) )
-        write( "#{0}=INVISIBILITY((#{1}))".format(j.j,j.j-1) )
-        write( "#{0}=(LENGTH_UNIT()NAMED_UNIT(*)SI_UNIT(.MILLI.,.METRE.))".format(j.j) )
-        write( "#{0}=(NAMED_UNIT(*)PLANE_ANGLE_UNIT()SI_UNIT($,.RADIAN.))".format(j.j) )
-        write( "#{0}=PLANE_ANGLE_MEASURE_WITH_UNIT(PLANE_ANGLE_MEASURE(1.745329251994E-2),#{1})".format(j.j,j.j-1) )
-        write( "#{0}=(CONVERSION_BASED_UNIT('DEGREE',#{1})NAMED_UNIT(*)PLANE_ANGLE_UNIT())".format(j.j,j.j-1) )
-        write( "#{0}=(NAMED_UNIT(*)SI_UNIT($,.STERADIAN.)SOLID_ANGLE_UNIT())".format(j.j) )
-        write( "#{0}=UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.477113140796E-3),#{1},'distance_accuracy_value','Maximum model space distance between geometric entities at asserted connectivities')".format(j.j,j.j-5) )
-        write( "#{0}=(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((#{1}))GLOBAL_UNIT_ASSIGNED_CONTEXT({2})REPRESENTATION_CONTEXT('ID1','3'))".format(j.j,j.j-1,var_list(j.j-6, j.j-3, j.j-2)) )
-        write( "#{0}=GEOMETRICALLY_BOUNDED_SURFACE_SHAPE_REPRESENTATION('',(#{1}),#{2})".format(j.j,j_set,j.j-1) )
-        write( "#{0}=MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION('',({1}),#{2})".format(j.j,var_list(*shapes),j.j-2) )
+        write("#{0}=PRESENTATION_LAYER_ASSIGNMENT('.BLACK_HOLE','',(#{1}))".format(j.j, j_axis))
+        write("#{0}=INVISIBILITY((#{1}))".format(j.j, j.j-1))
+        write("#{0}=(LENGTH_UNIT()NAMED_UNIT(*)SI_UNIT(.MILLI.,.METRE.))".format(j.j))
+        write("#{0}=(NAMED_UNIT(*)PLANE_ANGLE_UNIT()SI_UNIT($,.RADIAN.))".format(j.j))
+        write("#{0}=PLANE_ANGLE_MEASURE_WITH_UNIT(PLANE_ANGLE_MEASURE(1.745329251994E-2),#{1})".format(j.j, j.j-1))
+        write("#{0}=(CONVERSION_BASED_UNIT('DEGREE',#{1})NAMED_UNIT(*)PLANE_ANGLE_UNIT())".format(j.j, j.j-1))
+        write("#{0}=(NAMED_UNIT(*)SI_UNIT($,.STERADIAN.)SOLID_ANGLE_UNIT())".format(j.j))
+        write("#{0}=UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.477113140796E-3),#{1},'distance_accuracy_value','Maximum model space distance between geometric entities at asserted connectivities')".format(j.j,j.j-5))
+        write("#{0}=(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((#{1}))GLOBAL_UNIT_ASSIGNED_CONTEXT({2})REPRESENTATION_CONTEXT('ID1','3'))".format(j.j,j.j-1,var_list(j.j-6, j.j-3, j.j-2)))
+        write("#{0}=GEOMETRICALLY_BOUNDED_SURFACE_SHAPE_REPRESENTATION('',(#{1}),#{2})".format(j.j, j_set, j.j-1))
+        write("#{0}=MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION('',({1}),#{2})".format(j.j, var_list(*shapes), j.j-2))
 
         write("ENDSEC")
         write("END-ISO-10303-21")
@@ -509,11 +540,13 @@ if len(sys.argv) not in range(2, 4) or '-h' in sys.argv:
         + 'Flags:\n'
         + "-h: show this message, don't convert anything\n"
         + '-x: exclude part detail, only show pin pads and drill holes')
-    sys.exit()
+    exit(2)
 
 fn = sys.argv[1]
-if '-x' in sys.argv: shape_flag = False
-else: shape_flag = True
+if '-x' in sys.argv:
+    shape_flag = False
+else:
+    shape_flag = True
 
 thing = None
 with open(fn) as infile:
@@ -530,11 +563,11 @@ with open(fn) as infile:
         thing = PCBDecals(infile)
     elif line == "*PADS-LIBRARY-PART-TYPES-V9*":
         thing = PartTypes(infile)
-    else: # Invalid data type
+    else:   # Invalid data type
         print("Unrecognized data type!")
 pads2step(thing)
 
-if False:#__name__ == "__main__":
+if __name__ == "__main__":
     print("TESTS:")
     tests = [
         ('name', 'MOLEX_1051330011'),
@@ -548,8 +581,7 @@ if False:#__name__ == "__main__":
         ('n_terminals', 8),
         ('n_stacks', 4),
         ('maxlayers', 0),
-        ('timestamp', datetime(2017, 10, 26, 14, 12, 31))
-    ]
+        ('timestamp', datetime(2017, 10, 26, 14, 12, 31))]
     for t in tests:
         print(str(getattr(thing, t[0]) == t[1]) + ' - ' + t[0] + ": " + str(t[1]))
 
