@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Extracts data entities from an stp file and sorts them by number for readability
+# Extracts data entities from an stp file and sorts them by number
 
 f, f_keys = [], []
 
@@ -17,10 +17,10 @@ with open(fn) as stp:
         if line[0] == '#' and '=' in line:
             stop = line.find('=')
             f.append(line)
-            f_keys.append( int(line[1:stop]) )
+            f_keys.append(int(line[1:stop]))
 
 # Sort all data entities by their number
-f = [x for _, x in sorted( zip(f_keys, f), key=lambda pair: pair[0] )]
+f = [x for _, x in sorted(zip(f_keys, f), key=lambda pair: pair[0])]
 
 # Output result
 with open("examples/test_sketch_out.txt", 'w') as out:
