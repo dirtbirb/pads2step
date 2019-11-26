@@ -11,4 +11,4 @@ It's easy to find people complaining about the lack of communication between "el
 
 This script takes a PADS .d file, reads each line into a Python object, and then spits it out as a sketch in a STEP .stp file. I don't know if there is any demand for the reverse operation or conversion from other PADS objects to .stp format, but it should be doable. Thankfully, the PADS file format is much simpler than STEP.
 
-This is my first open-source project, and it's currently a mess! All suggestions and pull requests are welcome.
+This is my first open-source project, and it's currently a mess! Currently works for my purposes, which are limited. All suggestions, feature requests, and contributions are welcome.
